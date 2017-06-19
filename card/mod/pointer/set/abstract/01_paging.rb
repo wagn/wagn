@@ -1,11 +1,12 @@
+include_set Abstract::PagingParams
+
 format do
   def limit
-    default_limit
+    limit_param
   end
 
   def offset
-    return 0 unless Env.params[:offset].present?
-    @offset ||= Env.params.delete(:offset).to_i
+    offset_param
   end
 
   def search_with_params args={}

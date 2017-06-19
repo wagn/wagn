@@ -1,3 +1,5 @@
+include_set Abstract::PagingParams
+
 format do
   def offset
     search_params[:offset] || 0
@@ -20,10 +22,8 @@ format do
   end
 
   def offset_and_limit_search_params hash
-    [:offset, :limit].each do |key|
-      # delete values otherwise nested pointers use them for paging
-      hash[key] = params.delete(key).to_i if params[key]
-    end
+    hash[:offset] = offset_param
+    hash[:limit] = limit_param
   end
 end
 

@@ -98,3 +98,11 @@ Metrics/LineLength:
   Max: 90
   Exclude:
     - '**/step_definitions/*_steps.rb'
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: ()
+    '%i': '[]'
+    '%I': '[]'
+    '%r': '{}'
+    '%w': '[]'
+    '%W': '[]'

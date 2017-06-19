@@ -202,14 +202,14 @@ describe Card::Set::Type::EmailTemplate::EmailConfig do
     end
 
     it "handles inline image nests in html message" do
-         update_field "*html message", content: "Triggered by {{:logo|inline}}"
-         mail = email.format.render_mail context: context_card
-         expect(mail.parts[0].mime_type).to eq "image/png"
-         url = mail.parts[0].url
-         expect(mail.parts[2].mime_type).to eq "text/html"
-         expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
-         expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
-       end
+      update_field "*html message", content: "Triggered by {{:logo|inline}}"
+      mail = email.format.render_mail context: context_card
+      expect(mail.parts[0].mime_type).to eq "image/png"
+      url = mail.parts[0].url
+      expect(mail.parts[2].mime_type).to eq "text/html"
+      expect(mail.parts[2].body.raw_source).to include('<img src="cid:')
+      expect(mail.parts[2].body.raw_source).to include("<img src=\"#{url}\"")
+    end
 
     it "handles image nests in html message in default view" do
       update_field "*html message", content: "Triggered by {{:logo|core}}"

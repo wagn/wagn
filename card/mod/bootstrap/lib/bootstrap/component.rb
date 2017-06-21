@@ -69,7 +69,7 @@ class Bootstrap
     private
 
     def render_content
-      #if @build_block.arity > 0
+      # if @build_block.arity > 0
       instance_exec *@args, &@build_block
     end
 
@@ -86,7 +86,6 @@ class Bootstrap
       @child_args.pop if args.present?
       res
     end
-
 
     def add_content content
       @content[-1] << "\n#{content}".html_safe if content.present?
@@ -109,7 +108,7 @@ class Bootstrap
     def standardize_args args, &block
       opts = args.last.is_a?(Hash) ? args.pop : {}
       items = ((args.one? && args.last.is_a?(String)) || args.last.is_a?(Array)) &&
-          args.pop
+              args.pop
       if block.present?
         opts, args = instance_exec opts, args, &block
         unless opts.is_a?(Hash)

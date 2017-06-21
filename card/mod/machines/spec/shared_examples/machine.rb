@@ -2,6 +2,7 @@
 
 shared_examples_for "machine" do |args|
   let(:filetype)  { args[:that_produces] }
+
   context "machine is run" do
     before do
       machine.update_machine_output
@@ -22,7 +23,7 @@ end
 shared_examples_for "content machine" do |args|
   let(:filetype) { args[:that_produces] }
 
-  it_should_behave_like "machine", args do
+  it_behaves_like "machine", args do
     let(:machine) { machine_card }
   end
 
@@ -50,7 +51,6 @@ shared_examples_for "content machine" do |args|
 end
 
 shared_examples_for "pointer machine" do |args|
-  let(:filetype) { args[:that_produces] }
   subject do
     # We build the following structure:
     #
@@ -106,7 +106,9 @@ shared_examples_for "pointer machine" do |args|
     change_machine
   end
 
-  it_should_behave_like "machine", args do
+  let(:filetype) { args[:that_produces] }
+
+  it_behaves_like "machine", args do
     let(:machine) { machine_card }
   end
 

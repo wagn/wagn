@@ -11,7 +11,7 @@ class Bootstrap
 
       add_tag_method :form, "form-horizontal"
 
-      add_tag_method :label, "control-label" do |opts, extra_args|
+      add_tag_method :label, "control-label" do |opts, _extra_args|
         prepend_class opts, "col-sm-#{left_col_width}"
         opts
       end

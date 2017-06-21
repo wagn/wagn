@@ -27,7 +27,7 @@ describe Card::Set::Right::Email do
 
   context "+*account+*email" do
     context "update" do
-      before :each do
+      before do
         @email_card = Card["u1"].account.email_card
       end
 

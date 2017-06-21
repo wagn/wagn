@@ -1,4 +1,4 @@
-include_set Abstract::ProsemirrorEditor
+
 
 format :html do
   # FIELDSET VIEWS

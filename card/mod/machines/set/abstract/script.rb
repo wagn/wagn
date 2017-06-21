@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
-require "uglifier"
 
-include_set Abstract::AceEditor
+require "uglifier"
 
 def self.included host_class
   host_class.include_set Abstract::Machine
@@ -54,8 +53,12 @@ format do
 end
 
 format :html do
-  def default_editor_args args
-    args[:ace_mode] ||= "javascript"
+  def editor
+    :ace_editor
+  end
+
+  def ace_mode
+    :javascript
   end
 
   view :content_changes do |args|

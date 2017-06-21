@@ -135,8 +135,8 @@ format do
 
     relevant_fields =
       case action.action_type
-      when :create then [:cardtype, :content]
-      when :update then [:name, :cardtype, :content]
+      when :create then %i[cardtype content]
+      when :update then %i[name cardtype content]
       when :delete then [:content]
       end
 

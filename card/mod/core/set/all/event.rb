@@ -1,4 +1,4 @@
-EVENT_CONDITIONS = [:set, :on, :changed, :when].freeze
+EVENT_CONDITIONS = %i[set on changed when].freeze
 
 def event_applies? opts
   EVENT_CONDITIONS.all? do |key|

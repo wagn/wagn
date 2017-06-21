@@ -10,7 +10,7 @@ describe Card::Set::Right::Style do
   let(:new_css)                { "#box{ display: none}\n"   }
   let(:compressed_new_css)     { "#box{display:none}\n"   }
 
-  it_should_behave_like "pointer machine", that_produces: :css do
+  it_behaves_like "pointer machine", that_produces: :css do
     let(:machine_card) do
       Card.gimme! "test my style+*style", type: :pointer, content: ""
     end

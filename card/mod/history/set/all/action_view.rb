@@ -32,7 +32,7 @@ format :html do
 
   def content_diff action, view_type
     diff = action.new_content? &&
-           _render_content_changes(action: action, diff_type: view_type) #, hide_diff: @hide_diff
+           _render_content_changes(action: action, diff_type: view_type) # , hide_diff: @hide_diff
     return "<i>empty</i>" unless diff.present?
     diff
   end

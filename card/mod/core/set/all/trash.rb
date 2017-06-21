@@ -81,7 +81,7 @@ event :validate_delete, :validate, on: :delete do
   end
 
   undeletable_all_rules_tags =
-    %w(default style layout create read update delete)
+    %w[default style layout create read update delete]
   # FIXME: HACK! should be configured in the rule
 
   if junction? && (l = left) && l.codename == "all" &&

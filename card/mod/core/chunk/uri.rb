@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "uri"
 
 # This wiki chunk matches arbitrary URIs, using patterns from the Ruby URI
@@ -20,7 +21,7 @@ require "uri"
 #   [iso3166]: http://geotags.com/iso3166/
 module Card::Content::Chunk
   class URI < Abstract
-    SCHEMES = %w(irc http https ftp ssh git sftp file ldap ldaps mailto).freeze
+    SCHEMES = %w[irc http https ftp ssh git sftp file ldap ldaps mailto].freeze
 
     REJECTED_PREFIX_RE = %w{! ": " ' ](}.map { |s| Regexp.escape s } * "|"
 
@@ -47,7 +48,7 @@ module Card::Content::Chunk
 
       def context_ok? content, chunk_start
         preceding_string = content[chunk_start - 2..chunk_start - 1]
-        !(preceding_string =~ /(?:#{REJECTED_PREFIX_RE})$/)
+        preceding_string !~ /(?:#{REJECTED_PREFIX_RE})$/
       end
     end
 
@@ -57,7 +58,7 @@ module Card::Content::Chunk
       chunk.gsub!(/(?:&nbsp;)+/, "")
 
       @trailing_punctuation =
-        if %w{, . ) ! ? :}.member?(last_char)
+        if %w[, . ) ! ? :].member?(last_char)
           @text.chop!
           chunk.chop!
           last_char

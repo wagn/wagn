@@ -37,6 +37,7 @@ shared_examples_for "notifications" do
         )
         @card.format(format: format).render_list_of_changes(action: action)
       end
+
       it { is_expected.to include "content: #{content}" }
     end
     context "for a given action id" do
@@ -48,6 +49,7 @@ shared_examples_for "notifications" do
         @card.format(format: format)
              .render_list_of_changes(action_id: action_id)
       end
+
       it { is_expected.to include "content: #{content}" }
     end
   end
@@ -141,6 +143,7 @@ describe Card::Set::All::SendNotifications do
               follow_option: "*always"
             ).text_part.body.raw_source
           end
+
           before do
             create_or_update! "#{name}+*self+*read",
                               type: "Pointer", content: "[[Administrator]]"

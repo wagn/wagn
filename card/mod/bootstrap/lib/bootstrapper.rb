@@ -1,4 +1,4 @@
-require 'bootstrap'
+require "bootstrap"
 module Bootstrapper
   extend Bootstrap::ComponentLoader
 

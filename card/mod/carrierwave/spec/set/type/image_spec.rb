@@ -27,6 +27,7 @@ describe Card::Set::Type::Image do
       end
     end
     subject { Card["image card"] }
+
     it "stores correct identifier" do
       expect(subject.content)
         .to eq "~#{subject.id}/#{subject.last_action_id}.jpg"
@@ -98,6 +99,7 @@ describe Card::Set::Type::Image do
 
   describe "*logo mod image" do
     subject { Card[:logo] }
+
     it "exists" do
       expect(subject.image.size).to be > 0
     end
@@ -140,6 +142,7 @@ describe Card::Set::Type::Image do
                      image: File.new(File.join(FIXTURES_PATH, "mao2.jpg"))
       end
     end
+
     it "deletes all versions" do
       path = subject.image.path
       small_path = subject.image.small.path

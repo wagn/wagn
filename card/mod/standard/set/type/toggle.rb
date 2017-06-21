@@ -28,5 +28,3 @@ format :html do
     label :content, card.cardname.tag
   end
 end
-
-

@@ -3,7 +3,7 @@
 # FIXME: need more specific assertions
 
 describe Card::Set::Self::Signin do
-  before :each do
+  before do
     @card = Card[:signin]
   end
 
@@ -51,7 +51,7 @@ describe Card::Set::Self::Signin do
   end
 
   context "#reset password" do
-    before :each do
+    before do
       Card::Env.params[:reset_password] = true
     end
 

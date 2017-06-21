@@ -39,6 +39,7 @@ describe Card::Set::All::Rules do
         Card.create name: "*all+*help", content: "edit any kind of card"
       end
       subject { Card.new(type: "Book").rule(:add_help, fallback: :help) }
+
       it "retrieves default setting" do
         expect(subject).to eq("edit any kind of card")
       end
@@ -58,7 +59,7 @@ describe Card::Set::All::Rules do
 
   describe "#setting_codenames_by_group" do
     before do
-      @pointer_settings = [:options, :options_label, :input]
+      @pointer_settings = %i[options options_label input]
     end
     it "doesn't fail on nonexistent trunks" do
       codenames = Card.new(name: "foob+*right").setting_codenames_by_group
@@ -72,12 +73,6 @@ describe Card::Set::All::Rules do
       expect(snbg.keys.length).to eq(4)
       expect(snbg.keys.first).to be_a Symbol
       expect(snbg.keys.member?(:pointer)).not_to be_truthy
-    end
-
-    it "returns pointer-specific setting names for pointer card" do
-      c = Card.fetch "Fruit+*type+*create+*self", new: {}
-      snbg = c.setting_codenames_by_group
-      expect(snbg[:pointer]).to eq(@pointer_settings)
     end
   end
 

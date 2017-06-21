@@ -13,6 +13,7 @@ describe Card::Set::Type::Toggle do
 
   describe "view :labeled_editor" do
     subject { render_view :labeled_editor, type: :toggle, name: "A+toggle" }
+
     it "has checkbox label" do
       is_expected.to have_tag("label", with: { for: "card_content" }) do
         with_text "toggle"
@@ -20,5 +21,3 @@ describe Card::Set::Type::Toggle do
     end
   end
 end
-
-

@@ -21,12 +21,12 @@ format :html do
   end
 
   FIELD_HELPERS =
-    %w(
+    %w[
       hidden_field color_field date_field datetime_field datetime_local_field
       email_field month_field number_field password_field phone_field
       range_field search_field telephone_field text_area text_field time_field
       url_field week_field file_field label check_box radio_button
-    ).freeze
+    ].freeze
 
   FIELD_HELPERS.each do |method_name|
     define_method(method_name) do |*args|

@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "rspec-html-matchers"
 
 describe Card::Set::All::Base do

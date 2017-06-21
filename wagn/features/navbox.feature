@@ -31,4 +31,4 @@ Feature: Navbox
     Then I should see "Search results"
     And I should see "Sample Skin"
     When I click on "2"
-    Then I should see "simplex skin+style"
+    Then I should see "superhero skin"

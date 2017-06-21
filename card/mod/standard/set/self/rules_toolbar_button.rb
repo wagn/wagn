@@ -32,11 +32,11 @@ format :html do
 
   def edit_rules_link text, rule_view
     subject.link_to_view :edit_rules, text,
-                        path: { rule_view: rule_view }
+                         path: { rule_view: rule_view }
   end
 
   def edit_nest_rules_link text
     subject.link_to_view :edit_nest_rules, text,
-                        path: { rule_view: :field_related_rules }
+                         path: { rule_view: :field_related_rules }
   end
 end

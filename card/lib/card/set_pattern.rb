@@ -137,6 +137,7 @@ EOF
           if parts.size <= anchor_parts_count
             parts
           else
+            # handles cases where anchor is a compound card, eg A+B+*self
             [@anchor_name[0..-anchor_parts_count]] + parts[(-anchor_parts_count + 1)..-1]
           end
         end

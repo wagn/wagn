@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 require "card/mailer"
 
 describe Card::Set::Type::EmailTemplate do

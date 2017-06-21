@@ -21,7 +21,6 @@ describe Card::Set::Type::Uri do
     card = Card.create(type: "URI", name: "A URI card",
                        content: "http://wagn.org/Home")
 
-
     assert_view_select(
       card.format.render("core", title: "My Title"),
       'a[class="external-link"][href="http://wagn.org/Home"]'

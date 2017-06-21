@@ -1,7 +1,6 @@
 include_set Abstract::ToolbarSplitButton
 
 format :html do
-
   TOOLBAR_TITLE = {
     edit: "content",             edit_name: "name",      edit_type: "type",
     edit_structure: "structure", edit_nests: "nests",    history: "history",
@@ -203,7 +202,8 @@ format :html do
         ["references in",  "log-in",       "*referred_to_by"]
       ].map do |title, icon, tag|
         menu_item " #{title}", icon, related: tag,
-                                     path: { slot: { show: :toolbar } }
+                                     path: { slot: { show: :toolbar,
+                                                     hide: :menu } }
       end
     end
   end

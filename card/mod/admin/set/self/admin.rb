@@ -27,7 +27,7 @@ format :html do
       stats += Array.wrap task[:stats]
     end
     table_content = stats.map { |args| stat_row(args) }
-    table table_content, header: %w(Stat Value Action)
+    table table_content, header: %w[Stat Value Action]
   end
 
   def card_stats

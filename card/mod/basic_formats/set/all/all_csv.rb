@@ -27,7 +27,7 @@ format :csv  do
   end
 
   def name_with_fields_row
-    nested_fields.each_with_object([card.name]) do |(field_name, options), row|
+    nested_fields.each_with_object([card.name]) do |(field_name, _options), row|
       row << nest(field_name)
     end
   end

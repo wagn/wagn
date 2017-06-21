@@ -1,5 +1,3 @@
-include_set Abstract::AceEditor
-
 def clean_html?
   false
 end
@@ -15,5 +13,11 @@ format do
 
   def chunk_list
     :references
+  end
+end
+
+format :html do
+  def editor
+    :ace_editor
   end
 end

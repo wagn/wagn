@@ -15,6 +15,7 @@ describe Card::Set::Type::Scss do
     SCSS
   end
   let(:compressed_changed_css) { "a{color:#fedcba}\n" }
+
   before do
     @scss_card = Card[:style_cards]
   end
@@ -28,7 +29,7 @@ describe Card::Set::Type::Scss do
     expect(@scss_card.format(:css).render_core).not_to match(/CodeRay/)
   end
 
-  it_should_behave_like "machine input"  do
+  it_behaves_like "machine input"  do
     let(:create_machine_input_card) do
       Card.gimme! "test scss", type: :scss, content: scss
     end
@@ -52,7 +53,7 @@ describe Card::Set::Type::Scss do
     end
   end
 
-  it_should_behave_like "content machine", that_produces: :css do
+  it_behaves_like "content machine", that_produces: :css do
     let(:machine_card) { Card.gimme! "test scss", type: :scss, content: scss }
     let(:card_content) do
       { in:           scss,         out:     compressed_css,

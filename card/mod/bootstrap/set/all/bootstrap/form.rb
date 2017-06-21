@@ -21,11 +21,11 @@ format :html do
     options
   end
 
-  FIELD_HELPERS = %w(hidden_field color_field date_field datetime_field
+  FIELD_HELPERS = %w[hidden_field color_field date_field datetime_field
                      datetime_local_field email_field month_field number_field
                      password_field phone_field range_field search_field
                      telephone_field text_area text_field time_field
-                     url_field week_field file_field).freeze
+                     url_field week_field file_field].freeze
 
   FIELD_HELPERS.each do |method_name|
     define_method(method_name) do |name, options={}|

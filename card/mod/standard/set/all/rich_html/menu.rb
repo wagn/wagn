@@ -61,7 +61,7 @@ format :html do
   end
 
   def menu_item_list link_opts={}
-    [:edit, :discuss, :follow, :page, :rules, :account, :more].map do |item|
+    %i[edit discuss follow page rules account more].map do |item|
       next unless send "show_menu_item_#{item}?"
       send "menu_#{item}_link", link_opts
     end.compact

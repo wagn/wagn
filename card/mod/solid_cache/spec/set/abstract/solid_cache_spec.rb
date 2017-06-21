@@ -8,9 +8,10 @@ describe Card::Set::Abstract::SolidCache do
 
     # let(:core_view) { 'Alpha <a class="known-card" href="/Z">Z</a>' }
     let(:core_view) { "Alpha Z[/Z]" }
+
     context "with solid cache" do
       it "saves core view in solid cache card" do
-        @card.format_with_set(Card::Set::Abstract::SolidCache, &:render_core)
+        @card.format_with_set(described_class, &:render_core)
         Card::Auth.as_bot do
           expect(Card["A", :solid_cache]).to be_instance_of(Card)
           expect(Card["A", :solid_cache].content).to eq(core_view)
@@ -18,7 +19,7 @@ describe Card::Set::Abstract::SolidCache do
       end
 
       it "uses solid cache card content as core view" do
-        @card.format_with_set(Card::Set::Abstract::SolidCache) do |format|
+        @card.format_with_set(described_class) do |format|
           Card::Auth.as_bot do
             Card["A"].solid_cache_card.update_attributes! content: "cache"
           end
@@ -28,7 +29,7 @@ describe Card::Set::Abstract::SolidCache do
     end
     context "with solid cache disabled" do
       it "ignores solid cache card content" do
-        @card.format_with_set(Card::Set::Abstract::SolidCache) do |format|
+        @card.format_with_set(described_class) do |format|
           Card::Auth.as_bot do
             Card["A"].solid_cache_card.update_attributes! content: "cache"
           end

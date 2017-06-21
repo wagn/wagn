@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
+
 describe Card::Set::Type::Pointer do
   describe "item_names" do
     it "returns array of names of items referred to by a pointer" do
       card = Card.new(type: "Pointer", content: "[[Busy]]\n[[Body]]")
-      card.item_names.should == %w(Busy Body)
+      card.item_names.should == %w[Busy Body]
     end
   end
 
@@ -113,7 +114,7 @@ describe Card::Set::Type::Pointer do
         in_stage :validate,
                  on: :save,
                  trigger: pointer_update("[[item1]]\n[[item3]]") do
-          expect(changed_item_names.sort).to eq %w(item2 item3)
+          expect(changed_item_names.sort).to eq %w[item2 item3]
         end
       end
     end

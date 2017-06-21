@@ -73,14 +73,18 @@ end
 
 def applicable_permission_rule_id direct_rule, action
   if junction? && direct_rule.db_content =~ /^\[?\[?_left\]?\]?$/
-    lcard = left_or_new(skip_virtual: true, skip_modules: true)
-    if action == :create && lcard.real? && !lcard.action == :create
-      action = :update
-    end
-    lcard.permission_rule_id action
+    left_permission_rule_id action
   else
     direct_rule.id
   end
+end
+
+def left_permission_rule_id action
+  lcard = left_or_new(skip_virtual: true, skip_modules: true)
+  if action == :create && lcard.real? && lcard.action != :create
+    action = :update
+  end
+  lcard.permission_rule_id action
 end
 
 def permission_rule_card action
@@ -134,7 +138,7 @@ def ok_to_create
   permit :create
   return if !@action_ok || !junction?
 
-  [:left, :right].each do |side|
+  %i[left right].each do |side|
     # left is supercard; create permissions will get checked there.
     next if side == :left && @superleft
     part_card = send side, new: {}
@@ -177,7 +181,7 @@ event :clear_read_rule, :store, on: :delete do
 end
 
 event :set_read_rule, :store,
-      on: :save, changed: [:type_id, :name] do
+      on: :save, changed: %i[type_id name] do
   read_rule_id, read_rule_class = permission_rule_id_and_class(:read)
   self.read_rule_id = read_rule_id
   self.read_rule_class = read_rule_class
@@ -311,9 +315,9 @@ module Follow
   end
 
   def permit action, verb=nil
-    if [:create, :delete, :update].include?(action) && Auth.signed_in? &&
+    if %i[create delete update].include?(action) && Auth.signed_in? &&
        (user = rule_user) && Auth.current_id == user.id
-      return true
+      true
     else
       super action, verb
     end

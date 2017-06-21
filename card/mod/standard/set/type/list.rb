@@ -58,7 +58,7 @@ event :update_related_listed_by_card_on_content_update, :finalize,
 end
 
 event :update_related_listed_by_card_on_name_and_type_changes, :finalize,
-      on: :update, changed: [:name, :type_id] do
+      on: :update, changed: %i[name type_id] do
   update_all_items
 end
 

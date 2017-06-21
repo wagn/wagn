@@ -17,17 +17,17 @@ view :raw do |_args|
   end.join("\n")
   content += [
     # Reset and dependencies
-    %w(normalize print glyphicons),
+    %w[normalize print glyphicons],
     # Core CSS
-    %w(scaffolding type code grid tables forms buttons),
+    %w[scaffolding type code grid tables forms buttons],
     # Components
-    %w(component-animations dropdowns button-groups input-groups navs navbar
+    %w[component-animations dropdowns button-groups input-groups navs navbar
        breadcrumbs pagination pager labels badges jumbotron thumbnails alerts
-       progress-bars media list-group panels responsive-embed wells close),
+       progress-bars media list-group panels responsive-embed wells close],
     # Components w/ JavaScript
-    %w(modals tooltip popovers carousel),
+    %w[modals tooltip popovers carousel],
     # Utility classes
-    %w(utilities responsive-utilities)
+    %w[utilities responsive-utilities]
   ].map do |names|
     names.map do |name|
       path = File.join(bootstrap_path, "_#{name}.scss")

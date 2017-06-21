@@ -59,7 +59,7 @@ format :html do
     cancel_button href: path(view: :edit, id: card.id)
   end
 
-  view :confirm_update_all do |args|
+  view :confirm_update_all do |_args|
     wrap do
       alert "info" do
         %(

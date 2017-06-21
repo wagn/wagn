@@ -1,4 +1,4 @@
-include_set Abstract::ProsemirrorEditor
+
 
 format :html do
   # FIELDSET VIEWS
@@ -76,7 +76,6 @@ format :html do
     return if !card || card.new_card? || skip_rev_id
     hidden_field :last_action_id_before_edit, class: "current_revision_id"
   end
-
 
   def edit_slot
     if inline_nests_editor?

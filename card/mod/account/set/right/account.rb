@@ -135,10 +135,7 @@ def reset_password_try_again
              "Please check your email for a new password reset link." }
 end
 
-
-def edit_password_success_args
-
-end
+def edit_password_success_args; end
 
 def reset_password?
   @env_token = Env.params[:token]

@@ -39,9 +39,9 @@ format :html do
 
   def toggle_verb_adjective_direction
     if @toggle_mode == :close
-      %w(open open expand)
+      %w[open open expand]
     else
-      %w(close closed collapse-down)
+      %w[close closed collapse-down]
     end
   end
 

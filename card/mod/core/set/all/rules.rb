@@ -215,8 +215,7 @@ module ClassMethods
         left: {
           left: { type_id: SetID }, right: user_name
         },
-        return: :name
-      }, "preference cards for user: #{user_name}"
+        return: :name }, "preference cards for user: #{user_name}"
     )
   end
 

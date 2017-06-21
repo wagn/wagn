@@ -6,9 +6,10 @@ describe Card::Set::All::Collection do
       item_names_args = @context ? { context: @context } : {}
       Card.new(@args).item_names(item_names_args)
     end
+
     it "returns item for each line of basic content" do
       @args = { name: "foo", content: "X\nY" }
-      is_expected.to eq(%w(X Y))
+      is_expected.to eq(%w[X Y])
     end
 
     it "returns list of card names for search" do
@@ -54,7 +55,9 @@ describe Card::Set::All::Collection do
   end
 
   describe "#contextual_content" do
-    let(:context_card) { Card["A"] } # refers to 'Z'
+    let(:context_card) { Card["A"] }
+
+    # refers to 'Z'
     it "processes nests relative to context card" do
       c = create "foo", content: "{{_self+B|core}}"
       expect(c.contextual_content(context_card)).to eq("AlphaBeta")
@@ -67,7 +70,7 @@ describe Card::Set::All::Collection do
       expect(c.contextual_content(context_card)).to eq("AlphaBeta")
     end
 
-    it "it doesn't use chunk list of context card" do
+    it "doesn't use chunk list of context card" do
       c = create "foo", content: "test@email.com", type: "HTML"
       expect(c.contextual_content(context_card)).not_to have_tag "a"
     end

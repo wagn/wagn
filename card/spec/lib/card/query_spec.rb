@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-
 RSpec.describe Card::Query do
   A_JOINEES = %w(B C D E F).freeze
   CARDS_MATCHING_TWO = ["Joe User", "One+Two", "One+Two+Three",

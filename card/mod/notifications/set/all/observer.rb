@@ -1,4 +1,4 @@
-[:create, :update, :delete].each do |action|
+%i[create update delete].each do |action|
   event "observer_#{action}".to_sym, :integrate, on: action do
     execute_card_events on: action
   end

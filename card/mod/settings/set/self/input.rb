@@ -1,4 +1,3 @@
 extend Card::Setting
-setting_opts group: :pointer, position: 3,
-             restricted_to_type: [:pointer, :session],
+setting_opts group: :editing, position: 3,
              rule_type_editable: false

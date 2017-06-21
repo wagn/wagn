@@ -37,7 +37,7 @@ class Card
                        }
 
     # these are the three possible values for action_type
-    TYPE_OPTIONS = [:create, :update, :delete].freeze
+    TYPE_OPTIONS = %i[create update delete].freeze
 
     after_save :expire
 

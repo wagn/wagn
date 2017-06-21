@@ -5,6 +5,7 @@ shared_examples_for "machine input" do
     myinput = create_machine_input_card
     myinput
   end
+
   let!(:machine) do
     f = create_machine_card
     f << create_machine_input_card

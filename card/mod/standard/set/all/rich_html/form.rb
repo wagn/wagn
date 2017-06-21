@@ -77,7 +77,6 @@ format :html do
     hidden_field :last_action_id_before_edit, class: "current_revision_id"
   end
 
-
   def edit_slot
     if inline_nests_editor?
       _render_core
@@ -168,10 +167,8 @@ format :html do
 
   def card_form action, opts={}
     @form_root = true
-    url, action = card_form_url_and_action action
     success = opts.delete(:success)
-    html_opts = card_form_html_opts action, opts
-    form_for card, url: url, html: html_opts, remote: true do |form|
+    form_for card, card_form_opts(action, opts) do |form|
       @form = form
       success_tags(success) + output(yield(form))
     end
@@ -191,11 +188,21 @@ format :html do
     end
   end
 
-  def card_form_html_opts action, opts={}
-    klasses = Array.wrap(opts[:class]) << "card-form slotter"
-    klasses << "autosave" if action == :update
-    opts[:class] = klasses.join " "
+  # @param action [Symbol] :create or :update
+  # @param opts [Hash] html options
+  # @option opts [Boolean] :redirect (false) if true form is no "slotter"
+  def card_form_opts action, opts={}
+    url, action = card_form_url_and_action action
+    html_opts = card_form_html_opts action, opts
+    form_opts = { url: url, html: html_opts }
+    form_opts[:remote] = true unless html_opts.delete(:redirect)
+    form_opts
+  end
 
+  def card_form_html_opts action, opts={}
+    add_class opts, "card-form"
+    add_class opts, "slotter" unless opts[:redirect]
+    add_class opts, "autosave" if action == :update
     opts[:recaptcha] ||= "on" if card.recaptcha_on?
     opts.delete :recaptcha if opts[:recaptcha] == :off
     opts

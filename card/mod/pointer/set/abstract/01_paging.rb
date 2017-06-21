@@ -1,11 +1,12 @@
+include_set Abstract::PagingParams
+
 format do
   def limit
-    default_limit
+    limit_param
   end
 
   def offset
-    return 0 unless Env.params[:offset].present?
-    Env.params[:offset].to_i
+    offset_param
   end
 
   def search_with_params args={}
@@ -59,11 +60,14 @@ format :html do
   end
 
   def paging_path_args local_args={}
-    @paging_path_args ||= {
+    @paging_path_args ||= {}
+    @paging_path_args.reverse_merge!(
       limit: limit,
+      offset: offset,
       view: paging_view,
       slot: voo.slot_options
-    }.merge(extra_paging_path_args)
+    )
+    @paging_path_args.merge! extra_paging_path_args
     @paging_path_args.merge local_args
   end
 

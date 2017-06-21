@@ -1,10 +1,9 @@
 format :html do
   def invitation?
-    if @invitation.nil?
-      @invitation = Auth.signed_in? && args[:account].confirm_ok?
-    else
-      @invitation
-    end
+    return @invitation unless @invitation.nil?
+    @invitation = Auth.signed_in? &&
+                  (card.fetch trait: :account, new: {}).confirm_ok?
+    # consider making account a card_accessor?
   end
 
   view :new do

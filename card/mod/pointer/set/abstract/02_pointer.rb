@@ -126,12 +126,11 @@ format :json do
 
   def essentials
     return if @depth > max_depth
-    item_cards.map do |item|
+    card.item_cards.map do |item|
       nest item, view: :essentials
     end
   end
 end
-
 
 # If a card's type and content are updated in the same action, the new module
 # will override the old module's events and functions. But this event is only
@@ -186,7 +185,7 @@ def item_names args={}
   raw_items = content.to_s.split(/\n+/)
   if args[:limit].present? && args[:limit].to_i > 0
     offset = args[:offset] || 0
-    raw_items = raw_items[offset, args[:limit].to_i]
+    raw_items = raw_items[offset, args[:limit].to_i] || []
   end
   raw_items.map do |line|
     item_name = line.gsub(/\[\[|\]\]/, "").strip

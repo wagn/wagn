@@ -2,7 +2,7 @@ format :html do
   view :new, perms: :create, tags: :unknown_ok, cache: :never do
     voo.title ||= new_view_title if new_name_prompt?
     voo.show :help
-    frame_and_form :create, "main-success" => "REDIRECT" do
+    frame_and_form :create, new_form_opts do
       [
         new_view_hidden,
         new_view_name,
@@ -11,6 +11,10 @@ format :html do
         _optional_render_new_buttons
       ]
     end
+  end
+
+  def new_form_opts
+    { "main-success" => "REDIRECT" }
   end
 
   def new_view_title

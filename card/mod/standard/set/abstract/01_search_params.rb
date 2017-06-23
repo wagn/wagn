@@ -1,3 +1,5 @@
+include_set Abstract::PagingParams
+
 format do
   def offset
     search_params[:offset] || 0
@@ -20,9 +22,8 @@ format do
   end
 
   def offset_and_limit_search_params hash
-    %i[offset limit].each do |key|
-      hash[key] = params[key].to_i if params[key]
-    end
+    hash[:offset] = offset_param
+    hash[:limit] = limit_param
   end
 end
 

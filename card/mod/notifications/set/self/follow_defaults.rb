@@ -31,7 +31,8 @@ end
 
 format :html do
   view :edit, perms: :update, tags: :unknown_ok do
-    frame_and_form :update do
+    frame_and_form :update, hidden: { success: "_self",
+                                      card: { update_all_users: false } } do
       [
         _optional_render_content_formgroup,
         _optional_render_confirm_update_all,
@@ -69,11 +70,5 @@ format :html do
         )
       end
     end
-  end
-
-  def default_edit_args args
-    args[:hidden] ||= {}
-    args[:hidden].reverse_merge!(success: "_self",
-                                 card: { update_all_users: false })
   end
 end

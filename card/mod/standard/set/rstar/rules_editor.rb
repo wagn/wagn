@@ -47,7 +47,10 @@ format :html do
     return "No Current Rule" if card.new_card?
 
     voo.items[:view] ||= :link
-    show_rule_set(card.rule_set) + _render_core
+    output [
+      show_rule_set(card.rule_set),
+      _render_core
+    ]
   end
 
   def show_rule_set set

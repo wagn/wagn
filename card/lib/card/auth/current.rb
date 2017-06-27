@@ -53,12 +53,16 @@ class Card
         { as_id: as_id, current_id: current_id }
       end
 
-      # @param auth_data [Integer|Hash] user id or a hash
+      # @param auth_data [Integer|Hash] user id, user name, or a hash
       # @opts auth_data [Integer] current_id
       # @opts auth_data [Integer] as_id
       def with auth_data
-        auth_data = { current_id: auth_data } if auth_data.is_a?(Integer)
-        raise ArgumentError unless auth_data.is_a? Hash
+        case auth_data
+        when Integer
+          auth_data = { current_id: auth_data }
+        when String
+          auth_data = { current_id: Card.fetch_id(auth_data) }
+        end
 
         tmp_current = current_id
         tmp_as_id = as_id

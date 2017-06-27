@@ -64,14 +64,18 @@ class Card
           auth_data = { current_id: Card.fetch_id(auth_data) }
         end
 
-        tmp_current = current_id
+        tmp_current_id = current_id
         tmp_as_id = as_id
-        @current_id = auth_data[:current_id]
+        tmp_current = @current
+        tmp_as_card = @as_card
+        self.current_id = auth_data[:current_id]
         @as_id = auth_data[:as_id] if auth_data[:as_id]
         yield
       ensure
-        @current_id = tmp_current
+        @current_id = tmp_current_id
         @as_id = tmp_as_id
+        @current = tmp_current
+        @as_card = tmp_as_card
       end
 
       # get session object from Env

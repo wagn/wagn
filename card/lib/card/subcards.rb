@@ -233,11 +233,11 @@ class Card
     #   tracked_attributes.rb. Find a place for it where its accessible
     #   for both. There is one important difference. The keys are symbols
     # here instead of strings
-    def extract_subcard_args! args
+    def extract_subcard_args! name, args
       subcards = args.delete(:subcards) || {}
       if (subfields = args.delete(:subfields))
         subfields.each_pair do |key, value|
-          subcards[cardname.field(key)] = value
+          subcards[name.to_name.field(key)] = value
         end
       end
       args.keys.each do |key|
@@ -255,7 +255,7 @@ class Card
         new_by_card left_card, transact_in_stage: attributes[:transact_in_stage]
         left_card.subcards.new_by_attributes absolute_name, attributes
       else
-        subcard_args = extract_subcard_args! attributes
+        subcard_args = extract_subcard_args! name, attributes
         t_i_s = attributes.delete(:transact_in_stage)
         card = Card.assign_or_initialize_by absolute_name.s, attributes, local_only: true
         subcard = new_by_card card, transact_in_stage: t_i_s
@@ -265,6 +265,7 @@ class Card
     end
 
     def absolutize_subcard_name name
+      name = Card.compose_mark name if name.is_a? Array
       if @context_card.name =~ /^\+/ || name.blank?
         name.to_name
       else

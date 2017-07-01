@@ -3,7 +3,7 @@ format :html do
   def class_up klass, classier, force=false
     key = klass.to_s
     return if !force && class_list[key]
-    class_list[key] = classier.to_s
+    class_list[key] = [class_list[key], classier.to_s].compact.join(" ")
   end
 
   def class_down klass, classier

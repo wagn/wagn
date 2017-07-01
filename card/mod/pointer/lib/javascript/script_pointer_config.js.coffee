@@ -25,6 +25,7 @@ wagn.editorInitFunctionMap['.pointer-list-editor'] = ->
 $.extend wagn,
   initPointerList: (input) ->
     optionsCard = input.closest('ul').data('options-card')
+    optionsCard ||= input.closest('.pointer-list-editor').data('options-card')
     input.autocomplete {
       source: wagn.prepUrl wagn.rootPath + '/' + optionsCard +
           '.json?view=name_complete'

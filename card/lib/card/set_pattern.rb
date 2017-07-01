@@ -99,7 +99,6 @@ EOF
             @module_key
           else
             @module_key = begin
-              # binding.pry if to_s == "*input+*right+*options+*self"
               if self.class.anchorless?
                 self.class.pattern_code.camelize
               elsif anchor_codenames

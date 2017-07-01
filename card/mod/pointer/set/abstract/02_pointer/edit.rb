@@ -71,6 +71,18 @@ format :html do
     HTML
   end
 
+  view :autocomplete do |args|
+    items = args[:item_list] || card.item_names(context: :raw)
+    items = [""] if items.empty?
+    <<-HTML
+      <div class="pointer-list-editor pointer-list-ul"
+          data-options-card="#{options_card_name}">
+        #{text_field_tag 'pointer_item', items.first,
+                         class: 'pointer-item-text form-control'}
+      </div>
+    HTML
+  end
+
   view :checkbox do |_args|
     options = card.option_names.map do |option_name|
       checked = card.item_names.include?(option_name)
@@ -110,8 +122,13 @@ format :html do
         </li>
       HTML
     end.join("\n")
+    options = "no options" if options.empty?
 
     %(<ul class="pointer-radio-list">#{options}</ul>)
+  end
+
+  def radio_options
+
   end
 
   def option_label option_name, id

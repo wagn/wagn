@@ -2,7 +2,7 @@ class Card
   class ActManager
     module Stage
       STAGES = [:initialize, :prepare_to_validate, :validate, :prepare_to_store,
-                :store, :finalize, :integrate, :integrate_with_delay].freeze
+                :store, :finalize, :integrate, :after_integrate, :integrate_with_delay].freeze
       stage_index = {}
       STAGES.each_with_index do |stage, i|
         stage_index[stage] = i

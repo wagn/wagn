@@ -79,7 +79,9 @@ class Card < ActiveRecord::Base
 
     # INTEGRATION PHASE
     :integrate_stage, :integrate_with_delay_stage,
-    :integrate_final_stage, :integrate_with_delay_final_stage
+    :integrate_final_stage,
+    :after_integrate_stage,
+    :after_integrate_final_stage, :integrate_with_delay_final_stage
   )
 
   # Validation and integration phase are only called for the act card

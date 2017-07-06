@@ -114,6 +114,7 @@ class Card
         return if @abort
         @card.restore_changes_information
         run_single_stage :integrate
+        run_single_stage :after_final_integrate
         run_single_stage :integrate_with_delay
       rescue => e  # don't rollback
         Card::Error.current = e

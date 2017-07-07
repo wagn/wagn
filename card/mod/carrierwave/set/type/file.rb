@@ -90,7 +90,7 @@ format :html do
   end
 
   def humanized_attachment_name
-    card.attachment_name.tr("_"," ").capitalize
+    card.attachment_name.to_s.humanize
   end
 
   def preview

@@ -4,6 +4,7 @@ end
 
 event :add_comment, :prepare_to_store, on: :save, when: :comment do
   Env.session[:comment_author] = comment_author if Env.session
+  return unless comment.present?
   self.content =
     [content, format.comment_with_signature].compact.join "\n<hr\>\n"
 end

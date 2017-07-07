@@ -89,6 +89,10 @@ format :html do
     file_chooser
   end
 
+  def humanized_attachment_name
+    card.attachment_name.tr("_"," ").capitalize
+  end
+
   def preview
     ""
   end
@@ -139,7 +143,7 @@ format :html do
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-cloud-upload"></i>
             <span>
-                #{card.new_card? ? 'Add' : 'Replace'} #{card.attachment_name}...
+                #{card.new_card? ? 'Add' : 'Replace'} #{humanized_attachment_name}...
             </span>
              <input class="file-upload slotter form-control" type="file"
                 name="card[#{card.type_code}]" id="card_#{card.type_code}">

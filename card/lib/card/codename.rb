@@ -52,8 +52,7 @@ class Card
       # @todo remove duplicate checks here; should be caught upon creation
       def check_duplicates codehash, codename, card_id
         return unless codehash.key?(codename) || codehash.key?(card_id)
-        warn "dup code ID:#{card_id} (#{codehash[codename]}), " \
-             "CD:#{codename} (#{codehash[card_id]})"
+        warn "dup codename: #{codename}, ID:#{card_id} (#{codehash[codename]})"
       end
 
       # generate Hash for @codehash and put it in the cache

@@ -119,7 +119,7 @@ class Card
       rescue => e  # don't rollback
         Card::Error.current = e
         warn "exception in integrate stage: #{e.message}"
-        binding.pry
+        # binding.pry
         @card.notable_exception_raised
         return false
       ensure

@@ -20,8 +20,7 @@ end
 
 format :html do
   def with_paging path_args={}
-    paging_path_args path_args
-    output [yield(@paging_path_args), _optional_render_paging]
+    output [yield( paging_path_args(path_args)), _optional_render_paging]
   end
 
   view :paging, cache: :never do
@@ -72,7 +71,7 @@ format :html do
   end
 
   def paging_view
-    (voo && voo.home_view) || :content
+    (voo && voo.home_view) || voo.slot_options[:view] || :content
   end
 
   def extra_paging_path_args

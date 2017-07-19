@@ -1,40 +1,49 @@
  include_set Abstract::CodeFile
 
-view :raw do |_args|
-  bootstrap_path = File.join Cardio.gem_root, "mod",
-                             card.file_content_mod_name, "lib",
-                             "stylesheets", "bootstrap", "scss"
+ STYLESHEETS_DIR = File.join(Cardio.gem_root, "mod",
+                             file_content_mod_name, "lib",
+                             "stylesheets").freeze
+ BOOTSTRAP_PATH = File.join(STYLESHEETS_DIR, "bootstrap", "scss").freeze
 
+ def read_dir sub_dir
+   Dir.glob("#{BOOTSTRAP_PATH}/#{sub_dir}/*.scss").map do |name|
+     File.read name
+   end.join("\n")
+ end
+
+ view :raw do |_args|
   # variables
-  content = File.read("#{bootstrap_path}/_variables.scss")
+  content = File.read("#{BOOTSTRAP_PATH}/_variables.scss")
   content += %(
       $bootstrap-sass-asset-helper: false;
       $icon-font-path: "#{card_url 'assets/fonts/'}";
     )
   # mixins
-  content += Dir.glob("#{bootstrap_path}/mixins/*.scss").map do |name|
-    File.read name
-  end.join("\n")
+  content += card.read_dir("mixins")
+
   content += [
+    %w[custom],
     # Reset and dependencies
-    %w[normalize print glyphicons],
+    %w[normalize print],
     # Core CSS
-    %w[scaffolding type code grid tables forms buttons],
+    %w[reboot type images code grid tables forms buttons],
     # Components
-    %w[component-animations dropdowns button-groups input-groups navs navbar
-       breadcrumbs pagination pager labels badges jumbotron thumbnails alerts
-       progress-bars media list-group panels responsive-embed wells close],
+    %w[transitions dropdown button-group input-group custom-forms nav navbar card
+       breadcrumb pagination badge jumbotron alert progress media list-group
+       responsive-embed close],
     # Components w/ JavaScript
-    %w[modals tooltip popovers carousel],
-    # Utility classes
-    %w[utilities responsive-utilities]
+    %w[modal tooltip popover carousel]
   ].map do |names|
     names.map do |name|
-      path = File.join(bootstrap_path, "_#{name}.scss")
+      path = File.join(BOOTSTRAP_PATH, "_#{name}.scss")
       Rails.logger.info "reading file: #{path}"
       File.read path
     end.join "\n"
   end.join "\n"
 
+  # Utility classes
+  content += card.read_dir("utilities")
+
+  content += File.read File.join(STYLESHEETS_DIR, "font-awesome.css")
   content
 end

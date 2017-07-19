@@ -127,10 +127,6 @@ format :html do
     %(<ul class="pointer-radio-list">#{options}</ul>)
   end
 
-  def radio_options
-
-  end
-
   def option_label option_name, id
     %(<label for="#{id}">#{option_label_text option_name}</label>)
   end

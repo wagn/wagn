@@ -19,7 +19,7 @@ Feature: File Upload
     And I wait for ajax response
     Then I should see "file.txt 9 Bytes"
     When I press "Delete"
-    Then I should see "Add file..."
+    Then I should see "Add File..."
     When I upload the file "file.txt"
     And I wait for ajax response
     And I fill in "card_name" with "a test file"

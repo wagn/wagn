@@ -68,6 +68,8 @@ class Card
         tmp_as_id = as_id
         tmp_current = @current
         tmp_as_card = @as_card
+
+        # resets @as and @as_card
         self.current_id = auth_data[:current_id]
         @as_id = auth_data[:as_id] if auth_data[:as_id]
         yield

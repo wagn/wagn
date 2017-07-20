@@ -266,6 +266,7 @@ body.mceContentBody {
 
 .closed-content {
   font-size: 1em !important;
+  padding:10px;
 }
 
 
@@ -285,10 +286,20 @@ body.mceContentBody {
 
 }
 
-/*-------- Help texts --------*/
+/*-------- Help Texts --------*/
  .alert-info p:last-child {
    margin-bottom: 0;
  }
+
+/*-------- Icon Helpers --------*/
+.toggler>i.material-icons{
+  color: #000;
+  font-size: 15px;
+  font-weight: bolder!important;
+  border: 2px solid #000;
+  border-radius: 3px;
+  margin-right: 3px;
+}
 
 /*-------- Toolbar --------*/
 .toolbar-close {

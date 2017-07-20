@@ -1,0 +1,13 @@
+<div class="navbar navbar-inverse bg-primary navbar-toggleable-md navbar-static-top">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-1" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <div class="navbar-nav mr-auto">
+        {{*main menu|navbar_links}}  
+        {{*navbox|navbar}}
+      </div>
+      {{*account links|navbar_links}}
+    </div>
+</div>

@@ -1,0 +1,9 @@
+---
+:cards:
+- :name: "*header"
+  :type: HTML
+  :key: "*header"
+- :name: "*main menu"
+  :type: HTML
+  :key: "*main_menu"
+:remotes: {}

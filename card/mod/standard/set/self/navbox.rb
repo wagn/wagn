@@ -10,7 +10,7 @@ format :html do
   def navbar_placeholder
     @@placeholder ||= begin
       holder_card = Card["#{Card[:navbox].name}+*placeholder"]
-      holder_card ? holder_card.raw_content : ""
+      holder_card ? holder_card.raw_content : "Search"
     end
   end
 

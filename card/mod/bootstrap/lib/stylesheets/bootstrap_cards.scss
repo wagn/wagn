@@ -291,6 +291,12 @@ body.mceContentBody {
    margin-bottom: 0;
  }
 
+/*-------- Toolbar --------*/
+.toolbar-close {
+  font-size: 20px !important;
+  font-weight: bolder !important;
+}
+
 /*-------- Icon Helpers --------*/
 .toggler>i.material-icons{
   color: #000;

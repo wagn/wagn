@@ -87,9 +87,9 @@ format :html do
 
   def group_tab group_key
     heading_id = "heading-#{group_key}"
-    wrap_with :div, class: "panel panel-default" do
-      wrap_with :div, class: "panel-heading", role: "tab", id: heading_id do
-        wrap_with :h4, class: "panel-title" do
+    wrap_with :div, class: "card" do
+      wrap_with :div, class: "card-header", role: "tab", id: heading_id do
+        wrap_with :h5, class: "mb-0" do
           group_collapse_link group_key
         end
       end
@@ -115,7 +115,9 @@ format :html do
     settings = card.visible_settings group_key
     wrap_with :div, id: collapse_id, class: "panel-collapse collapse",
                     role: "tabpanel", "aria-labelledby" => heading_id do
-      rules_table settings.map(&:codename)
+      wrap_with :div, class: "card-block" do
+        rules_table settings.map(&:codename)
+      end
     end
   end
 

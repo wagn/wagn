@@ -52,8 +52,6 @@ format :html do
     "nav-link #{classy(type)}"
   end
 
-  view(:navbar_right, cache: :never) { super() }
-
   view :core, cache: :never do
     status_class = Auth.signed_in? ? "logged-in" : "logged-out"
     wrap_with :span, id: "logging", class: status_class do

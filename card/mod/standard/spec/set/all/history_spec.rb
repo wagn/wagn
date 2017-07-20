@@ -7,7 +7,7 @@ describe Card::Set::All::History do
     # end
     it "has a frame" do
       history = render_card :history, name: "A"
-      assert_view_select history, 'div[class~="card-frame"]'
+      assert_view_select history, 'div[class~="d0-card-frame"]'
     end
 
     describe "#action_summary" do

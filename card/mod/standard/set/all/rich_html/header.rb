@@ -5,8 +5,8 @@ format :html do
   end
 
   def main_header
-    wrap_with :div, class: classy("card-header") do
-      wrap_with :div, class: classy("card-header-title") do
+    wrap_with :div, class: classy("d0-card-header") do
+      wrap_with :div, class: classy("d0-card-header-title") do
         header_title_elements
       end
     end
@@ -45,20 +45,12 @@ format :html do
     end
   end
 
-  def nav_link_list side
-    wrap_with :ul, class: "nav navbar-nav navbar-#{side}" do
+  view :navbar_links do
+    wrap_with :ul, class: "navbar-nav" do
       item_links.map do |link|
-        wrap_with(:li) { link }
+        wrap_with(:li, class: "nav-item") { link }
       end.join "\n"
     end
-  end
-
-  view :navbar_right do
-    nav_link_list :right
-  end
-
-  view :navbar_left do
-    nav_link_list :left
   end
 
   def show_follow?

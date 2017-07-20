@@ -12,8 +12,9 @@
  end
 
  view :raw do |_args|
-   $stop = true
-   return ""
+   content = File.read File.join(STYLESHEETS_DIR, "font-awesome.css")
+   content += File.read File.join(STYLESHEETS_DIR, "material-icons.css")
+   return content
    #return File.read(File.join(STYLESHEETS_DIR, "bootstrap.css"))
    # variables
    content = File.read("#{BOOTSTRAP_PATH}/_variables.scss")

@@ -31,7 +31,7 @@ format :html do
   end
 
   def open_rule_body rule_view
-    wrap_with :div, class: "card-body" do
+    wrap_with :div, class: "d0-card-body" do
       nest current_rule, view: rule_view, rule_context: card
     end
   end

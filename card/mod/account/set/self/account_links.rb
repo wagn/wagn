@@ -14,29 +14,29 @@ format :html do
 
   view :sign_up, link_options(&:show_signup_link?) do
     link_to_card :signup, account_link_text(:sign_up),
-                 class: classy("signup-link"),
+                 class: nav_link_class("signup-link"),
                  path: { action: :new, mark: :signup }
   end
 
   view :sign_in, link_options { !Auth.signed_in? } do
     link_to_card :signin, account_link_text(:sign_in),
-                 class: classy("signin-link")
+                 class: nav_link_class("signin-link")
   end
 
   view :sign_out, link_options { Auth.signed_in? } do
     link_to_card :signin, account_link_text(:sign_out),
-                 class: classy("signout-link"),
+                 class: nav_link_class("signout-link"),
                  path: { action: :delete }
   end
 
   view :invite, link_options(&:show_invite_link?) do
     link_to_card :signup, account_link_text(:invite),
-                 class: classy("invite-link"),
+                 class: nav_link_class("invite-link"),
                  path: { action: :new, mark: :signup }
   end
 
   view :my_card, link_options { Auth.signed_in? } do
-    link_to_card Auth.current.cardname, nil, id: "my-card-link"
+    link_to_card Auth.current.cardname, nil, id: "my-card-link", class: "nav-link"
   end
 
   def account_link_text purpose
@@ -46,6 +46,10 @@ format :html do
 
   view :raw do
     item_links.join " "
+  end
+
+  def nav_link_class type
+    "nav-link #{classy(type)}"
   end
 
   view(:navbar_right, cache: :never) { super() }

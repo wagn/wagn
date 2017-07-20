@@ -10,7 +10,7 @@ view :editor do
                  else
                    "off"
                  end
-  password_field :content, class: "card-content", autocomplete: autocomplete
+  password_field :content, class: "d0-card-content", autocomplete: autocomplete
 end
 
 view :raw do

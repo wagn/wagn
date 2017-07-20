@@ -64,18 +64,18 @@ form {
 }
 
 
-.card-header,
-.card-body {
+.d0-card-frame,
+.d0-card-body {
   padding: 5px 0;
 }
 
-.card-frame {
+.d0-card-frame {
   border: 1px solid $border_color;
-  > .card-header {
+  > .d0-card-frame {
     background: $header_color;
     padding: 5px 12px;
   }
-  > .card-body {
+  > .d0-card-body {
     padding: 5px 12px;
   }
   > .instruction {
@@ -83,7 +83,7 @@ form {
   }
 }
 
-.card-header > .instruction {
+.d0-card-frame > .instruction {
   font-weight: normal;
   font-size: 0.9em;
 }
@@ -125,7 +125,7 @@ select {
     background: $input_focus_color;
   }
 }
-.history-view > .card-frame > .card-content,
+.history-view > .d0-card-frame > .d0-card-content,
 .conflict-view,
 body#tinymce {
   background: $input_color;
@@ -174,11 +174,11 @@ body.mceContentBody {
 /* CARDTYPE_SPECIFIC ------------------------------*/
 
 
-.TYPE-toggle.card-content {
+.TYPE-toggle.d0-card-content {
   font-style: italic;
 }
 
-.TYPE-image.card-content, .TYPE-image .card-body {
+.TYPE-image.d0-card-content, .TYPE-image .d0-card-body {
   img {
     max-width: 100%;
   }

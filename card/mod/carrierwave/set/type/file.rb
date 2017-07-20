@@ -84,7 +84,7 @@ format :html do
 
   view :editor do
     if card.web? || card.no_upload?
-      return text_field(:content, class: "card-content")
+      return text_field(:content, class: "d0-card-content")
     end
     file_chooser
   end

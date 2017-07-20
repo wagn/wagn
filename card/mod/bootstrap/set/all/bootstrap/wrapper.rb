@@ -1,17 +1,20 @@
 format :html do
   def frame
-    class_up "card-header", "panel-heading"
-    class_up "card-header-title", "panel-title"
-    class_up "card-body", "panel-body"
+    class_up "d0-card-header" , "card-header"
+    class_up "d0-card-header-title", "card-title"
+    class_up "d0-card-body", "card-block card-text"
     super
   end
 
   def standard_frame slot=true
-    class_up "card-frame", "panel panel-#{panel_state}"
+    if panel_state
+      class_up "d0-card-frame", "card card-#{panel_state} card-inverse"
+    else
+      class_up "d0-card-frame", "card"
+    end
     super
   end
 
   def panel_state
-    "default"
   end
 end

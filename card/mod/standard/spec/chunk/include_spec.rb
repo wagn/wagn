@@ -106,14 +106,14 @@ describe Card::Content::Chunk::Nest, "Inclusion" do
       create! "Alpha", "Pooey"
       beta = create! "Beta", "{{Alpha}}"
       result = beta.format.render_core
-      assert_view_select result, 'div[class~="card-content"]', "Pooey"
+      assert_view_select result, 'div[class~="d0-card-content"]', "Pooey"
     end
 
     it "handles simple relative names" do
       alpha = create! "Alpha", "{{#{Card::Name.joint}Beta}}"
       create! "Beta"
       create! "#{alpha.name}#{Card::Name.joint}Beta", "Woot"
-      assert_view_select alpha.format.render_core, "div[class~=card-content]",
+      assert_view_select alpha.format.render_core, "div[class~=d0-card-content]",
                          "Woot"
     end
 
@@ -125,7 +125,7 @@ describe Card::Content::Chunk::Nest, "Inclusion" do
       bob_address = create! "bob+address"
 
       r = bob_address.reload.format.render_core
-      assert_view_select r, "div[class~=card-content]", "Sparta"
+      assert_view_select r, "div[class~=d0-card-content]", "Sparta"
       expect(Card.fetch("bob+address").includees.map(&:name))
         .to eq([bob_city.name])
     end
@@ -135,7 +135,7 @@ describe Card::Content::Chunk::Nest, "Inclusion" do
       create! "Beta", "{{Delta}}"
       create! "Delta", "Booya"
       r = alpha.format.render_core
-      assert_view_select r, "div[class~=card-content]"
+      assert_view_select r, "div[class~=d0-card-content]"
       expect(r).to match(/Booya/)
     end
 

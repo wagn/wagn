@@ -10,7 +10,7 @@ body {
   min-width: 480px;
 }
 
-.card-frame {
+.d0-card-frame {
   margin: 1px 0;
   -moz-border-radius: 8px;
   border-radius: 8px;
@@ -20,10 +20,10 @@ body {
   background: #fff;
   margin: 0;
   padding: 0 !important;
-  > .card-body {
+  > .d0-card-body {
     min-height: 20px;
   }
-  > .card-header {
+  > .d0-card-header {
     margin: 0;
     color: #333333;
     background: #8AB;
@@ -47,7 +47,7 @@ body {
   border-bottom: 1px solid #ccc;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
-  .card-header {
+  .d0-card-header {
     -moz-border-radius: 0 6px 6px 0;
     border-radius: 0 6px 6px 0;
     margin-right: 4px;
@@ -56,8 +56,8 @@ body {
 
 
 .errors-view {
-  > .card-frame, & {
-    > .card-body {
+  > .d0-card-frame, & {
+    > .d0-card-body {
       border: 2px solid #b44;
       background: #ffb;
     }

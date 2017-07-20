@@ -61,7 +61,7 @@ wysiwyg_re = /^(.*) edits? "([^\"]*)" entering "([^\"]*)" into wysiwyg$/
 When wysiwyg_re do |username, cardname, content|
   signed_in_as(username) do
     visit "/card/edit/#{cardname.to_name.url_key}"
-    page.execute_script "$('#main .card-content').val('#{content}')"
+    page.execute_script "$('#main .d0-card-content').val('#{content}')"
     click_button "Submit"
   end
 end
@@ -146,7 +146,7 @@ When /^(.*) deletes? "([^\"]*)"$/ do |username, cardname|
 end
 
 When /^(?:|I )enter "([^"]*)" into "([^"]*)"$/ do |value, field|
-  selector = ".RIGHT-#{field.to_name.safe_key} input.card-content"
+  selector = ".RIGHT-#{field.to_name.safe_key} input.d0-card-content"
   find(selector).set value
 end
 

@@ -29,7 +29,7 @@ format :html do
   end
 
   def menu_icon
-    glyphicon "cog"
+    material_icon "settings"
   end
 
   view :vertical_menu, cache: :never, tags: :unknown_ok do
@@ -48,7 +48,7 @@ format :html do
   def vertical_menu_item_list
     wrap_with :ul, class: "dropdown-menu", role: "menu" do
       menu_item_list.map do |item|
-        "<li>#{item}</li>"
+        %{<li class="dropdown-item">#{item}</li>}
       end.join("\n").html_safe
     end
   end
@@ -81,15 +81,15 @@ format :html do
   end
 
   def menu_page_link opts
-    menu_item "page", "new-window", opts.merge(card: card)
+    menu_item "page", "open_in_new", opts.merge(card: card)
   end
 
   def menu_rules_link opts
-    menu_item "rules", "wrench", opts.merge(view: :edit_rules)
+    menu_item "rules", "build", opts.merge(view: :edit_rules)
   end
 
   def menu_account_link opts
-    menu_item "account", "user", opts.merge(
+    menu_item "account", "person", opts.merge(
       view: :related,
       path: { related: { name: "+#{:account.cardname.key}", view: :edit } }
     )
@@ -97,13 +97,14 @@ format :html do
 
   def menu_more_link opts
     view = voo.home_view || :open
-    menu_item "", "option-horizontal", opts.merge(
+    menu_item "", "more-horiz", opts.merge(
       view: view, path: { slot: { show: :toolbar } }
     )
   end
 
   def menu_item text, icon, opts={}
-    link_text = "#{glyphicon(icon)}<span class='menu-item-label'>#{text}</span>"
+    link_text = "#{material_icon(icon)}<span class='menu-item-label'>#{text}</span>"
+    add_class opts, "dropdown-item"
     smart_link_to link_text.html_safe, opts
   end
 

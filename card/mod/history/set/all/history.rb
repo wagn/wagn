@@ -132,7 +132,7 @@ end
 format :html do
   view :history, cache: :never do
     voo.show :toolbar
-    class_up "card-body",  "history-slot"
+    class_up "d0-card-body",  "history-slot"
     frame do
       bs_layout container: true, fluid: true do
         html _optional_render_history_legend(with_drafts: true)

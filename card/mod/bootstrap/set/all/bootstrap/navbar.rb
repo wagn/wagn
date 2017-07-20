@@ -5,7 +5,7 @@ format :html do
     nav_opts = opts[:navbar_opts] || {}
     nav_opts[:class] ||= opts[:class]
     add_class nav_opts,
-              "navbar navbar-#{opts.delete(:navbar_type) || 'default'}"
+              "navbar navbar-inverse bg-#{opts.delete(:navbar_type) || 'primary'}"
     return navbar_nocollapse(yield, nav_opts) if opts[:no_collapse]
     header_opts = opts[:header] || {}
     if opts[:toggle_align] == :left

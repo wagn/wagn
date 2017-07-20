@@ -75,11 +75,11 @@ class Card
       end
 
       def link_to_act_card
-        link_to_card @act_card, glyphicon("new-window")
+        link_to_card @act_card, icon_tag(:new_window)
       end
 
       def link_to_history
-        link_to_card @act_card, glyphicon("time"),
+        link_to_card @act_card, icon_tag(:history),
                      path: { view: :history, look_in_trash: true },
                      rel: "nofollow"
       end

@@ -6,7 +6,7 @@ describe Card::Format::HtmlFormat do
       assert_view_select(
         render_card(:content, name: "A+B"),
         'div[class="card-slot content-view ALL ALL_PLUS TYPE-basic '\
-        'RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b card-content"]'
+        'RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b d0-card-content"]'
       )
     end
 
@@ -23,10 +23,10 @@ describe Card::Format::HtmlFormat do
     it "titled" do
       result = render_card :titled, name: "A+B"
       assert_view_select result, 'div[class~="titled-view"]' do
-        assert_select 'div[class~="card-header"]' do
+        assert_select 'div[class~="d0-card-header"]' do
           assert_select 'span[class~="card-title"]'
         end
-        assert_select 'div[class~="card-body card-content"]', "AlphaBeta"
+        assert_select 'div[class~="d0-card-body d0-card-content"]', "AlphaBeta"
       end
     end
 
@@ -55,15 +55,15 @@ describe Card::Format::HtmlFormat do
       it "renders card header" do
         # lots of duplication here...
         assert_view_select @simple_page,
-                           'div[class="card-header panel-heading"]' do
-          assert_select 'div[class="card-header-title panel-title"]'
+                           'div[class="d0-card-header panel-heading"]' do
+          assert_select 'div[class="d0-card-header-title panel-title"]'
         end
       end
 
       it "renders card content" do
         assert_view_select(
           @simple_page,
-          'div[class="card-body card-content ALL ALL_PLUS ' \
+          'div[class="d0-card-body d0-card-content ALL ALL_PLUS ' \
           'TYPE-basic RIGHT-b TYPE_PLUS_RIGHT-basic-b SELF-a-b panel-body"]',
           "AlphaBeta"
         )
@@ -114,7 +114,7 @@ describe Card::Format::HtmlFormat do
 
         result = @main_card.format.render_layout
         expect(result).to match(/Hey.*div.*Joe User/)
-        expect(result).not_to match(/card-header/)
+        expect(result).not_to match(/d0-card-header/)
       end
 
       it "does not recurse" do

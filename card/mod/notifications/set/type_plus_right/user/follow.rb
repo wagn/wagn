@@ -160,7 +160,7 @@ format :html do
       if card.errors.find { |attrib, _msg| attrib == :permission_denied }
         Env.save_interrupted_action(request.env["REQUEST_URI"])
         voo.title = "Problems with #{card.name}"
-        class_up "card-frame", "panel panel-warning"
+        class_up "d0-card-frame", "card card-warning card-inverse"
         frame do
           "Please #{link_to_card :signin, 'sign in'}" # " #{to_task}"
         end

@@ -1,9 +1,34 @@
 format :html do
+  MATERIAL_ICON_MAP = {
+    plus: :add,
+    pencil: :edit,
+    trash: :delete,
+    wrench: :build,
+    new_window: :open_in_new,
+    history: :history,
+    triangle_left: :expand_less,
+    triangle_right: :expand_more,
+  }
+  FA_ICON_MAP = {
+
+  }
+  def icon_tag icon_type, extra_class=""
+    material_icon
+  end
+
   def glyphicon icon_type, extra_class=""
     return "" unless icon_type
     wrap_with :span, "",
               "aria-hidden" => true,
               class: "glyphicon glyphicon-#{icon_type} #{extra_class}"
+  end
+
+  def fa_icon icon, extra_class=""
+    %{<i class="fa fa-#{icon} #{extra_class}"></i>}
+  end
+
+  def material_icon icon, extra_class=""
+    %{<i class="material-icons #{extra_class}">#{icon}</i>}
   end
 
   def button_link link_text, opts={}
@@ -41,7 +66,7 @@ format :html do
 
   def dropdown_list_item item, active_test, active
     return unless item
-    "<li #{'class=\'active\'' if active_test == active}>#{item}</li>"
+    %{<li class="dropdown-item #{ ' active' if active_test == active}">#{item}</li>}
   end
 
   def separator
@@ -83,7 +108,8 @@ format :html do
     content = block_given? ? yield : content_or_options
     content = Array(content)
     default_item_options = options.delete(:items) || {}
-    wrap_with :ul, options do
+    tag = options[:ordered] ? :ol : :ul
+    wrap_with tag, options do
       content.map do |item|
         i_content, i_opts = item
         i_opts ||= default_item_options

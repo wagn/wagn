@@ -193,7 +193,7 @@ format :html do
   end
 
   view :related_button do
-    dropdown_button "", icon: "education", class: "related" do
+    dropdown_button "", icon: "explore", class: "related" do
       [
         ["children",       "baby-formula", "*children"],
         # ["mates",          "bed",          "*mates"],

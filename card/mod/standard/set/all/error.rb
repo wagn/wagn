@@ -131,7 +131,7 @@ format :html do
     return if card.errors.empty?
     voo.title = card.name.blank? ? "Problems" : "Problems with #{card.name}"
     voo.hide! :menu
-    class_up "card-frame", "panel panel-warning"
+    class_up "d0-card-frame", "card card-warning card-inverse"
     class_up "alert", "card-error-msg"
     frame do
       card.errors.map do |attrib, msg|

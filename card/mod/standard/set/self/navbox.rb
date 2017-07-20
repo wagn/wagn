@@ -14,13 +14,8 @@ format :html do
     end
   end
 
-  view :navbar_left do
-    class_up "navbox-form", "navbar-form navbar-left"
-    _render_core
-  end
-
-  view :navbar_right do
-    class_up "navbox-form", "navbar-form navbar-left"
+  view :navbar do
+    class_up "navbox-form", "form-inline"
     _render_core
   end
 

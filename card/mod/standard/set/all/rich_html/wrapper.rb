@@ -66,15 +66,15 @@ format :html do
   end
 
   def wrap_body
-    css_classes = ["card-body"]
-    css_classes += ["card-content", card.safe_set_keys] if @content_body
+    css_classes = ["d0-card-body"]
+    css_classes += ["d0-card-content", card.safe_set_keys] if @content_body
     wrap_with :div, class: classy(*css_classes) do
       yield
     end
   end
 
   def panel
-    wrap_with :div, class: classy("card-frame") do
+    wrap_with :div, class: classy("d0-card-frame") do
       yield
     end
   end

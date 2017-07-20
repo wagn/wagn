@@ -6,7 +6,6 @@ format do
   end
 
   def compile_scss scss, style=:expanded
-    binding.pry if $stop
     Sass.compile scss, style: style
   rescue Sass::SyntaxError => e
     raise Card::Error, "Sass::SyntaxError (#{card.name}:#{e.sass_line}): " \

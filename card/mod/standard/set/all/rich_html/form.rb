@@ -68,7 +68,7 @@ format :html do
 
   # SAMPLE editor view for override
   # view :editor do
-  #   text_area :content, rows: 5, class: "card-content"
+  #   text_area :content, rows: 5, class: "d0-card-content"
   # end
 
   def content_field_revision_tracking skip_rev_id

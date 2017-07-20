@@ -11,11 +11,11 @@ describe Card::Set::All::RichHtml::Wrapper do
         @ocslot.render(:open),
         'div[class="card-slot open-view ALL TYPE-basic SELF-a"]'
       ) do
-        assert_select 'div[class="card-frame panel panel-default"]' do
-          assert_select 'div[class="card-header panel-heading"]' do
-            assert_select 'div[class="card-header-title panel-title"]'
+        assert_select 'div[class="d0-card-frame card"]' do
+          assert_select 'div[class="d0-card-header card-header"]' do
+            assert_select 'div[class="d0-card-header-title card-title"]'
           end
-          assert_select 'div[class~="card-body"]'
+          assert_select 'div[class~="d0-card-body"]'
         end
       end
     end
@@ -25,11 +25,11 @@ describe Card::Set::All::RichHtml::Wrapper do
       assert_view_select(
         v, 'div[class="card-slot closed-view ALL TYPE-basic SELF-a"]'
       ) do
-        assert_select 'div[class="card-frame panel panel-default"]' do
-          assert_select 'div[class="card-header panel-heading"]' do
-            assert_select 'div[class="card-header-title panel-title"]'
+        assert_select 'div[class="d0-card-frame card"]' do
+          assert_select 'div[class="d0-card-header card-header"]' do
+            assert_select 'div[class="d0-card-header-title card-title"]'
           end
-          assert_select 'div[class~="card-body card-content"]'
+          assert_select 'div[class~="d0-card-body d0-card-content"]'
           assert_select 'div[class~="closed-content"]'
         end
       end

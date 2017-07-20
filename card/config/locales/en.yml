@@ -44,11 +44,11 @@ en:
             captcha_keys: You are configured to use [[*captcha]], but for that to work you need new recaptcha keys.
             instructions: Instructions
             howto_add_keys: "How to add new recaptcha keys:"
-            howto_register: 1. Register your domain at %{recaptcha_link}
-            howto_add: 2. Add your keys to %{recaptcha_settings}
+            howto_register: Register your domain at %{recaptcha_link}
+            howto_add: Add your keys to %{recaptcha_settings}
             howto_turn_off: 'How to turn captcha off:'
-            howto_go: 1. Go to %{captcha_card}
-            howto_update: 2. Update all *captcha rules to "no".
+            howto_go: Go to %{captcha_card}
+            howto_update: Update all *captcha rules to "no".
     standard:
       set:
         self:

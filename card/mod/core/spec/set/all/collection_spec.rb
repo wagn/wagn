@@ -100,7 +100,7 @@ describe Card::Set::All::Collection do
       end
       tabs = Card.fetch("G").format.render_tabs
       assert_view_select tabs, "div[role=tabpanel]" do
-        assert_select "div.tab-pane#g-g-b .card-content", "GammaBeta"
+        assert_select "div.tab-pane#g-g-b .d0-card-content", "GammaBeta"
       end
     end
 

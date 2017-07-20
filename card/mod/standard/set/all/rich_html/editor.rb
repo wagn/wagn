@@ -36,12 +36,12 @@ format :html do
   end
 
   def text_area_input
-    text_area :content, rows: 5, class: "card-content",
+    text_area :content, rows: 5, class: "d0-card-content",
                         "data-card-type-code" => card.type_code
   end
 
   def text_field_input
-    text_field :content, class: "card-content"
+    text_field :content, class: "d0-card-content"
   end
 
   def calendar_input

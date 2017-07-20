@@ -23,10 +23,7 @@ format :html do
     # 'ADMINISTRATOR WARNING'
     admin_warn = I18n.t(:admin_warn,
                         scope: "mod.admin.set.self.admin_info")
-    "<h6>#{admin_warn}</h6>".html_safe + list_group(
-      warnings,
-      items: { class: "list-group-item-warning" }
-    )
+    "<h5>#{admin_warn}</h5>" + warnings.join("\n")
   end
 
   def email_warning
@@ -57,14 +54,14 @@ format :html do
       <p>
         #{warning}
       </p>
-      <h4>#{instructions}</h4>
+      <h5>#{instructions}</h5>
       #{howto_add_new_recaptcha_keys}
       #{howto_turn_captcha_off}
     HTML
   end
 
   def instructions title, steps
-    steps = list_group steps
+    steps = list_tag steps, ordered: true
     "#{title}#{steps}"
   end
 

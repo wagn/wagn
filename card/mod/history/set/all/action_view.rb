@@ -54,12 +54,12 @@ format :html do
   def toggle_action_content_link action, view_type
     other_view_type = view_type == :expanded ? :summary : :expanded
     link_to_view "action_#{other_view_type}",
-                 glyphicon(arrow_dir(view_type)),
+                 icon_tag(arrow_dir(view_type)),
                  class: "slotter revision-#{action.card_act_id} pull-right",
                  path: { action_id: action.id, look_in_trash: true }
   end
 
   def arrow_dir view_type
-    view_type == :expanded ? "triangle-left" : "triangle-right"
+    view_type == :expanded ? :triangle_left : :triangle_right
   end
 end

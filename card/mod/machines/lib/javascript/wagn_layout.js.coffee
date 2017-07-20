@@ -16,8 +16,8 @@ containerClass = ->
 sidebarToggle = (side) ->
   icon_dir = if side == 'left' then 'right' else 'left'
   "<button class='offcanvas-toggle offcanvas-toggle-#{side} btn btn-secondary "+
-    "visible-xs' data-toggle='offcanvas-#{side}'>" +
-    "<span class='glyphicon glyphicon-chevron-#{icon_dir}'/></button>"
+    "hidden-sm-up' data-toggle='offcanvas-#{side}'>" +
+    "<i class='material-icons'>chevron-#{icon_dir}</i></button>"
 
 singleSidebar = (side) ->
   $article = $('body > article').first()
@@ -57,7 +57,7 @@ $(window).ready ->
 
   $('[data-toggle="offcanvas-left"]').click ->
     $('.row-offcanvas').removeClass('right-active').toggleClass('left-active')
-    $(this).find('span.glyphicon')
+    $(this).find('i.material-icons')
       .toggleClass('glyphicon-chevron-left glyphicon-chevron-right')
   $('[data-toggle="offcanvas-right"]').click ->
     $('.row-offcanvas').removeClass('left-active').toggleClass('right-active')

@@ -186,9 +186,9 @@ format :html do
     return "" if related_sets.size <= 1
     navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
                class: "slotter toolbar", navbar_type: "inverse",
-               collapsed_content: close_link("pull-right visible-xs") do
+               collapsed_content: close_link("pull-right hidden-sm-up") do
       [
-        wrap_with(:span, "Set:", class: "navbar-text hidden-xs"),
+        wrap_with(:span, "Set:", class: "navbar-text hidden-xs-down"),
         (wrap_with :ul, class: "nav navbar-nav nav-pills" do
           related_sets.map do |name, label|
             slot_opts = { subheader: showname(name),
@@ -213,13 +213,13 @@ format :html do
     navbar "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}",
            toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
            class: "slotter toolbar", navbar_type: "inverse",
-           collapsed_content: close_link("pull-right visible-xs") do
+           collapsed_content: close_link("pull-right hidden-sm-up") do
       [rule_navbar_heading, rule_navbar_content]
     end
   end
 
   def rule_navbar_heading
-    wrap_with :span, "Rules:", class: "navbar-text hidden-xs"
+    wrap_with :span, "Rules:", class: "navbar-text hidden-xs-down"
   end
 
   def rule_navbar_pills

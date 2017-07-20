@@ -12,7 +12,7 @@ format :html do
 
   view :menu_link do
     css_class =
-      show_view?(:horizontal_menu, :hide) ? "visible-xs" : "show-on-hover"
+      show_view?(:horizontal_menu, :hide) ? "hidden-sm-up" : "show-on-hover"
 
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       wrap_with :div, class: "btn-group slotter card-slot pull-right" do
@@ -55,7 +55,7 @@ format :html do
 
   view :horizontal_menu, cache: :never do
     wrap_with :div, class: "btn-group btn-group-sm slotter pull-right card-menu "\
-                             "horizontal-card-menu hidden-xs" do
+                             "horizontal-card-menu hidden-xs-down" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe
     end
   end

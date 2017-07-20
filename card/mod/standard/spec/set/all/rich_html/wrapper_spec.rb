@@ -13,7 +13,7 @@ describe Card::Set::All::RichHtml::Wrapper do
       ) do
         assert_select 'div[class="d0-card-frame card"]' do
           assert_select 'div[class="d0-card-header card-header"]' do
-            assert_select 'div[class="d0-card-header-title card-title"]'
+            assert_select 'div[class="d0-card-header-title"]'
           end
           assert_select 'div[class~="d0-card-body"]'
         end
@@ -27,7 +27,7 @@ describe Card::Set::All::RichHtml::Wrapper do
       ) do
         assert_select 'div[class="d0-card-frame card"]' do
           assert_select 'div[class="d0-card-header card-header"]' do
-            assert_select 'div[class="d0-card-header-title card-title"]'
+            assert_select 'div[class="d0-card-header-title"]'
           end
           assert_select 'div[class~="d0-card-body d0-card-content"]'
           assert_select 'div[class~="closed-content"]'

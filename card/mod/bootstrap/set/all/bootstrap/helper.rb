@@ -16,7 +16,9 @@ format :html do
       log_out: :call_made,
       log_in: :call_received,
       explore: :explore,
-      remove: :close
+      remove: :close,
+      expand: :expand_more,
+      collapse_down: :expand_less
     },
     font_awesome: {
       option_horizontal: :ellipsis_h,
@@ -29,7 +31,9 @@ format :html do
       baby_formula: "baby-formula",
       log_out: "log-out",
       log_in: "log-in",
+      collapse_down: "collaps-down"
     }
+
   }.freeze
 
   def icon_class library, icon

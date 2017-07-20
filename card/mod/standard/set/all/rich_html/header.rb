@@ -32,16 +32,16 @@ format :html do
 
   view :toggle do
     verb, adjective, direction = toggle_verb_adjective_direction
-    link_to_view adjective, icon_tag(direction),
+    link_to_view adjective, icon_tag(direction.to_sym),
                  title: "#{verb} #{card.name}",
                  class: "#{verb}-icon toggler slotter nodblclick"
   end
 
   def toggle_verb_adjective_direction
     if @toggle_mode == :close
-      %w[open open expand_more]
+      %w[open open expand]
     else
-      %w[close closed expand_less]
+      %w[close closed collapse_down]
     end
   end
 

@@ -181,29 +181,14 @@ format :html do
   end
 
   view :set_navbar do |_args|
-    id = "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}"
+    id = "set-navbar-#{card.cardname.safe_key}-#{voo.home_view}"
     related_sets = card.related_sets(true)
     return "" if related_sets.size <= 1
-    navbar id, toggle: '<span>Set</span>', toggle_align: :left,
-               class: "slotter toolbar navbar-toggleable-md", navbar_type: "inverse",
+    navbar id, brand: "Set", toggle_align: :right,
+               class: "slotter toolbar navbar-toggleable-md",
+               navbar_type: "inverse",
                collapsed_content: close_link("pull-right hidden-sm-up") do
-      [
-        wrap_with(:span, "Set:", class: "navbar-text hidden-xs-down"),
-        (wrap_with :ul, class: "nav navbar-nav nav-pills" do
-          related_sets.map do |name, label|
-            slot_opts = { subheader: showname(name),
-                          subframe: true,
-                          hide: "header set_label rule_navbar",
-                          show: "subheader set_navbar" }
-            link = link_to_card name, label, remote: true,
-                                             path: { view: @slot_view,
-                                                     slot: slot_opts },
-                                             class: "nav-link"
-
-            li_pill link, name == card.name
-          end
-        end)
-      ]
+      set_navbar_content related_sets
     end
   end
 
@@ -213,15 +198,11 @@ format :html do
 
   view :rule_navbar do
     navbar "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}",
-           toggle: '<span>Rules</span>', toggle_align: :left,
+           brand: 'Rules', toggle_align: :right,
            class: "slotter toolbar navbar-toggleable-md", navbar_type: "inverse",
            collapsed_content: close_link("pull-right hidden-sm-up") do
-      [rule_navbar_heading, rule_navbar_content]
+      rule_navbar_content
     end
-  end
-
-  def rule_navbar_heading
-    wrap_with :span, "Rules:", class: "navbar-text hidden-xs-down"
   end
 
   def rule_navbar_pills
@@ -237,6 +218,23 @@ format :html do
     wrap_with :ul, class: "nav navbar-nav nav-pills" do
       rule_navbar_pills.map do |label, symbol|
         view_link_pill label, symbol
+      end
+    end
+  end
+
+  def set_navbar_content related_sets
+    wrap_with :ul, class: "nav navbar-nav nav-pills" do
+      related_sets.map do |name, label|
+        slot_opts = { subheader: showname(name),
+                      subframe: true,
+                      hide: "header set_label rule_navbar",
+                      show: "subheader set_navbar" }
+        link = link_to_card name, label, remote: true,
+                            path: { view: @slot_view,
+                                    slot: slot_opts },
+                            class: "nav-link"
+
+        li_pill link, name == card.name
       end
     end
   end

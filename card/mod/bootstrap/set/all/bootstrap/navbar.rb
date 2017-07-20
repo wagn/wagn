@@ -2,7 +2,11 @@
 
 format :html do
   # Options
-  # header: { content: String, brand: ( String | {name: , href: } ) }
+  # @param opts [Hash]
+  # @option opts [String, Hash<name, href>] brand
+  # @option opts [String] class
+  # @option opts [Boolean] no_collapse
+  # @option opts [:left, :right] toggle_align
   def navbar id, opts={}
     nav_opts = opts[:navbar_opts] || {}
     nav_opts[:class] ||= opts[:class]
@@ -10,9 +14,9 @@ format :html do
               "navbar navbar-inverse bg-#{opts.delete(:navbar_type) || 'primary'}"
     content = yield
     if opts[:no_collapse]
-      navbar_nocollapse(content, nav_opts)
+      navbar_nocollapse content, nav_opts
     else
-      navbar_responsive id, content, nav_opts, opts
+      navbar_responsive id, content, opts, nav_opts
     end
   end
 
@@ -21,36 +25,25 @@ format :html do
     wrap_with :nav, content, nav_opts
   end
 
-  def navbar_responsive id, nav_opts, opts
-    header_opts = opts[:header] || {}
+  def navbar_responsive id, content, opts, nav_opts
     opts[:toggle_align] ||= :right
-    end
     wrap_with :nav, nav_opts do
       [
-        navbar_header(header_opts.delete(:content),
-                      header_opts),
+        navbar_header(opts[:brand]),
         navbar_toggle(id, opts[:toggle_align]),
         wrap_with(:div, class: "collapse navbar-collapse",
-                  id: "navbar-collapse-#{id}") {yield}
+                  id: "navbar-collapse-#{id}") { content }
       ]
     end
   end
 
-  def navbar_header content="", opts={}
-    brand =
-      if opts[:brand]
-        if opts[:brand].is_a? String
-          "<a class='navbar-brand' href='#'>#{opts[:brand]}</a>"
-        else
-          link = opts[:brand][:href] || "#"
-          "<a class='navbar-brand' href='#{link}#'>#{opts[:brand][:name]}</a>"
-        end
-      end
-    wrap_with :div, class: "navbar-header" do
-      [
-        brand,
-        (content if content)
-      ]
+  def navbar_header brand
+    return "" unless brand
+    if brand.is_a? String
+      "<a class='navbar-brand' href='#'>#{brand}</a>"
+    else
+      link = brand[:href] || "#"
+      "<a class='navbar-brand' href='#{link}#'>#{brand[:name]}</a>"
     end
   end
 

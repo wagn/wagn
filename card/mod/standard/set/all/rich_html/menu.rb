@@ -12,7 +12,7 @@ format :html do
 
   view :menu_link do
     css_class =
-      show_view?(:horizontal_menu, :hide) ? "hidden-sm-up" : "show-on-hover"
+      show_view?(:horizontal_menu, :hide) ? "hidden-sm-up" : "_show-on-hover"
 
     wrap_with :div, class: "vertical-card-menu card-menu #{css_class}" do
       wrap_with :div, class: "btn-group slotter card-slot pull-right" do

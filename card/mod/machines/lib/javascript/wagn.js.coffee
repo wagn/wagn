@@ -246,7 +246,7 @@ $(window).ready ->
 
   $('body').on 'submit', '.card-form', ->
     $(this).setContentFieldsFromMap()
-    $(this).find('.card-content').attr('no-autosave','true')
+    $(this).find('.d0-card-content').attr('no-autosave','true')
     true
 
   $('body').on 'click', '.submitter', ->
@@ -286,7 +286,7 @@ $(window).ready ->
       t = $(this)
       return false if t.closest( '.nodblclick'  )[0]
       # fail if inside a div with "nodblclick" class
-      return false if t.closest( '.card-header' )[0]
+      return false if t.closest( '.d0-card-header' )[0]
       # fail if inside a card header
       s = t.slot()
       return false if s.find( '.card-editor' )[0]
@@ -315,7 +315,7 @@ $(window).ready ->
   $('body').on 'change', '.edit-type-field', ->
     $(this).closest('form').submit()
 
-  $('body').on 'change', '.autosave .card-content', ->
+  $('body').on 'change', '.autosave .d0-card-content', ->
     content_field = $(this)
     setTimeout ( -> content_field.autosave() ), 500
 

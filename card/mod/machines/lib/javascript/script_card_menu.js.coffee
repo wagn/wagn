@@ -8,5 +8,5 @@ $(window).ready ->
     $(this).tab('show')
 
   if wagn.isTouchDevice()
-    $('.show-on-hover').removeClass('show-on-hover')
+    $('._show-on-hover').removeClass('_show-on-hover')
 

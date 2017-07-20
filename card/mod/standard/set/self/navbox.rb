@@ -1,8 +1,8 @@
 
 format :html do
   view :raw do
-    wrap_with :div, class: "form-group" do
-      text_field_tag :_keyword, "", class: "navbox form-control",
+    wrap_with :div, class: "form-group w-100" do
+      text_field_tag :_keyword, "", class: "_navbox navbox form-control w-100",
                                     placeholder: navbar_placeholder
     end
   end
@@ -15,7 +15,7 @@ format :html do
   end
 
   view :navbar do
-    class_up "navbox-form", "form-inline"
+    class_up "navbox-form", "form-inline w-25"
     _render_core
   end
 

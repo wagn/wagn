@@ -46,6 +46,10 @@ doubleSidebar = ->
   toggles = wrapSidebarToggle(sidebarToggle('right') + sidebarToggle('left'))
   $article.prepend(toggles)
 
+$.fn.extend toggleText: (a, b) ->
+  @text(if @text() == b then a else b)
+
+  this
 $(window).ready ->
   switch
     when $('body').hasClass('right-sidebar')
@@ -58,8 +62,8 @@ $(window).ready ->
   $('[data-toggle="offcanvas-left"]').click ->
     $('.row-offcanvas').removeClass('right-active').toggleClass('left-active')
     $(this).find('i.material-icons')
-      .toggleClass('glyphicon-chevron-left glyphicon-chevron-right')
+      .toggleText('chevron_left chevron_right')
   $('[data-toggle="offcanvas-right"]').click ->
     $('.row-offcanvas').removeClass('left-active').toggleClass('right-active')
-    $(this).find('span.glyphicon')
-      .toggleClass('glyphicon-chevron-left glyphicon-chevron-right')
+    $(this).find('i.material-icons')
+      .toggleText('chevron_left chevron_right')

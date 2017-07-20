@@ -1,6 +1,6 @@
 $(window).ready ->
 #navbox mod
-  $('.navbox').autocomplete {
+  $('._navbox').autocomplete {
     html: 'html',
     source: navbox_results,
     select: navbox_select
@@ -35,7 +35,7 @@ navboxize = (term, results) ->
       i = {
         value: term,
         prefix: key,
-        icon: 'plus',
+        icon: 'add',
         label: '<strong class="highlight">' + term + '</strong>'
       }
       if key == 'search'
@@ -51,15 +51,15 @@ navboxize = (term, results) ->
 
   $.each results['goto'], (index, val) ->
     items.push {
-      icon: 'share-alt', prefix: 'go to', value: val[0], label: val[1],
+      icon: 'arrow_forward', prefix: 'go to', value: val[0], label: val[1],
       href: '/' + val[2]
     }
 
   $.each items, (index, i) ->
     i.label =
-      '<span class="glyphicon glyphicon-' + i.icon + '"></span>' +
-      '<span class="navbox-item-label">'  + i.prefix + ':</span> ' +
-      '<span class="navbox-item-value">'  + i.label + '</span>'
+      '<i class="material-icons">' + i.icon + '</i>' +
+      '<span class="navbox-item-label">' + i.prefix + ':</span> ' +
+      '<span class="navbox-item-value">' + i.label + '</span>'
 
   items
 

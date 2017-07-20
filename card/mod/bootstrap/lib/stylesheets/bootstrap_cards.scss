@@ -142,7 +142,7 @@ body.mceContentBody {
 /*---------- Card menu ------------*/
 
 @media (min-width: $screen-xs-max) {
-  .card-slot > d0-card-frame > .menu-slot > .vertical-card-menu.show-on-hover {
+  .card-slot > .d0-card-frame > .menu-slot > .vertical-card-menu._show-on-hover {
     .btn-group.slotter {
       display: none;
       &.open {
@@ -151,7 +151,7 @@ body.mceContentBody {
     }
   }
 
-  .card-slot:hover > d0-card-frame > .menu-slot > .vertical-card-menu.show-on-hover .btn-group.slotter {
+  .card-slot:hover > .d0-card-frame > .menu-slot > .vertical-card-menu._show-on-hover .btn-group.slotter {
     display: inline-block;
   }
 }
@@ -305,4 +305,10 @@ body.mceContentBody {
   border: 2px solid #000;
   border-radius: 3px;
   margin-right: 3px;
+}
+
+/*-------- Toolbar --------*/
+.toolbar-close {
+  font-size: 20px !important;
+  font-weight: bolder !important;
 }

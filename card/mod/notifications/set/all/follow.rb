@@ -55,7 +55,7 @@ end
 format :html do
   view :follow_link, tags: :unknown_ok, perms: :none do |args|
     hash = follow_link_hash args
-    text = args[:icon] ? glyphicon("flag") : ""
+    text = args[:icon] ? icon(:flag) : ""
     span_attrs = "follow-verb menu-item-label"
     text += %(<span class="#{span_attrs}">#{hash[:verb]}</span>).html_safe
     # follow_rule_card = Card.fetch(

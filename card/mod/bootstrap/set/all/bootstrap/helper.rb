@@ -1,34 +1,50 @@
 format :html do
-  MATERIAL_ICON_MAP = {
-    plus: :add,
-    pencil: :edit,
-    trash: :delete,
-    wrench: :build,
-    new_window: :open_in_new,
-    history: :history,
-    triangle_left: :expand_less,
-    triangle_right: :expand_more,
+  ICON_MAP = {
+    material: {
+      plus: :add,
+      pencil: :edit,
+      trash: :delete,
+      wrench: :build,
+      new_window: :open_in_new,
+      history: :history,
+      triangle_left: :expand_less,
+      triangle_right: :expand_more,
+      flag: :flag,
+      option_horizontal: :more_horiz
+    },
+    font_awesome: {
+      option_horizontal: :ellipsis_h
+    },
+    glyphicon: {
+      option_horizontal: "option-horizontal",
+      triangle_left: "triangle-left",
+      triangle_right: "triagnle-right"
+    }
   }
-  FA_ICON_MAP = {
 
-  }
-  def icon_tag icon_type, extra_class=""
-    material_icon
+  def icon_class library, icon
+    ICON_MAP[library][icon] || icon
   end
 
-  def glyphicon icon_type, extra_class=""
-    return "" unless icon_type
+  def icon_tag icon, extra_class=""
+    return "" unless icon
+    material_icon icon_class(:material, icon), extra_class
+  end
+
+  def glyphicon icon, extra_class=""
+    return "" unless icon
     wrap_with :span, "",
               "aria-hidden" => true,
-              class: "glyphicon glyphicon-#{icon_type} #{extra_class}"
+              class: "glyphicon glyphicon-#{icon_class(:glyphicon, icon)} #{extra_class}"
   end
 
   def fa_icon icon, extra_class=""
-    %{<i class="fa fa-#{icon} #{extra_class}"></i>}
+    return "" unless icon
+    %{<i class="fa fa-#{icon_class(:font_awesome, icon)} #{extra_class}"></i>}
   end
 
   def material_icon icon, extra_class=""
-    %{<i class="material-icons #{extra_class}">#{icon}</i>}
+    %{<i class="material-icons #{extra_class}">#{icon_class(:material, icon)}</i>}
   end
 
   def button_link link_text, opts={}

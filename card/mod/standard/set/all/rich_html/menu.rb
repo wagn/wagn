@@ -97,7 +97,7 @@ format :html do
 
   def menu_more_link opts
     view = voo.home_view || :open
-    menu_item "", "more-horiz", opts.merge(
+    menu_item "", :option_horizontal, opts.merge(
       view: view, path: { slot: { show: :toolbar } }
     )
   end

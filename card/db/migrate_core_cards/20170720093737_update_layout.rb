@@ -2,6 +2,6 @@
 
 class UpdateLayout < Card::Migration::Core
   def up
-    merge_cards "*header", "*main_menu"
+    merge_cards ["*header", "*main_menu"]
   end
 end

@@ -48,7 +48,7 @@ format :html do
   def vertical_menu_item_list
     wrap_with :ul, class: "dropdown-menu", role: "menu" do
       menu_item_list.map do |item|
-        %{<li class="dropdown-item">#{item}</li>}
+        %{<li>#{item}</li>}
       end.join("\n").html_safe
     end
   end

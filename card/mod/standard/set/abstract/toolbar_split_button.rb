@@ -11,7 +11,7 @@ format :html do
   end
 
   def toolbar_split_button_link_text name, opts
-    icon = glyphicon opts.delete(:icon)
+    icon = icon_tag opts.delete(:icon)
     icon + content_tag(:span, "&nbsp;#{name}".html_safe,
                        class: "visible-md visible-lg pull-right")
   end

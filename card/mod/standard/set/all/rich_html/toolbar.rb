@@ -165,7 +165,7 @@ format :html do
     wrap_with :div, class: css_classes do
       [
         toolbar_pin_button,
-        link_to_view(voo.home_view, glyphicon("remove"),
+        link_to_view(voo.home_view, icon_tag(:remove),
                      title: "cancel",
                      class: "btn-toolbar-control btn btn-primary")
       ]
@@ -173,7 +173,7 @@ format :html do
   end
 
   def toolbar_pin_button
-    button_tag glyphicon("pushpin"),
+    button_tag icon_tag(:pushpin).html_safe,
                situation: :primary, remote: true,
                title: "#{'un' if toolbar_pinned?}pin",
                class: "btn-toolbar-control toolbar-pin hidden-xs " \
@@ -182,7 +182,7 @@ format :html do
 
   view :toolbar_buttons, cache: :never do
     related_button = _optional_render(:related_button).html_safe
-    wrap_with(:div, class: "btn-group") do
+    wrap_with(:div, class: "btn-group btn-group-sm") do
       [
         _optional_render(:delete_button,
                          optional: (card.ok?(:delete) ? :show : :hide)),
@@ -193,13 +193,13 @@ format :html do
   end
 
   view :related_button do
-    dropdown_button "", icon: "explore", class: "related" do
+    dropdown_button "", icon: :explore, class: "related" do
       [
-        ["children",       "baby-formula", "*children"],
+        ["children",       :baby_formula, "*children"],
         # ["mates",          "bed",          "*mates"],
         # FIXME: optimize and restore
-        ["references out", "log-out",      "*refers_to"],
-        ["references in",  "log-in",       "*referred_to_by"]
+        ["references out", :log_out,      "*refers_to"],
+        ["references in",  :log_in,       "*referred_to_by"]
       ].map do |title, icon, tag|
         menu_item " #{title}", icon, related: tag,
                                      path: { slot: { show: :toolbar,
@@ -218,7 +218,7 @@ format :html do
   view :delete_button do |_args|
     confirm = "Are you sure you want to delete #{card.name}?"
     success = main? ? "REDIRECT: *previous" : "TEXT: #{card.name} deleted"
-    toolbar_button "delete", "trash",
+    toolbar_button "delete", :trash,
                    path: { action: :delete, success: success },
                    class: "slotter", remote: true, :'data-confirm' => confirm
   end
@@ -231,11 +231,10 @@ format :html do
   end
 
   def toolbar_button_text text, symbol, hide
-    icon = glyphicon symbol
     hide ||= "hidden-xs hidden-sm hidden-md hidden-lg"
     css_classes = "menu-item-label #{hide}"
     rich_text = wrap_with :span, text.html_safe, class: css_classes
-    icon + rich_text
+    icon_tag(symbol) + rich_text
   end
 
   def autosaved_draft_link opts={}
@@ -256,7 +255,7 @@ format :html do
 
     view "#{viewname}_link" do
       voo.title ||= viewtitle
-      link_to_view viewname, voo.title
+      link_to_view viewname, voo.title, class: "dropdown-item"
     end
   end
 

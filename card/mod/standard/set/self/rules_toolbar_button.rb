@@ -32,7 +32,8 @@ format :html do
 
   def edit_rules_link text, rule_view
     subject.link_to_view :edit_rules, text,
-                         path: { rule_view: rule_view }
+                         path: { rule_view: rule_view },
+                         class: "dropdown-item"
   end
 
   def edit_nest_rules_link text

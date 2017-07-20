@@ -54,7 +54,7 @@ format :html do
   end
 
   view :horizontal_menu, cache: :never do
-    wrap_with :div, class: "btn-group slotter pull-right card-menu "\
+    wrap_with :div, class: "btn-group btn-group-sm slotter pull-right card-menu "\
                              "horizontal-card-menu hidden-xs" do
       menu_item_list(class: "btn btn-default").join("\n").html_safe
     end
@@ -77,7 +77,7 @@ format :html do
   end
 
   def menu_follow_link opts
-    _render_follow_link(icon: true, link_opts: opts)
+    _render_follow_link(icon: true, link_opts: opts.merge(class: "dropdown-item"))
   end
 
   def menu_page_link opts

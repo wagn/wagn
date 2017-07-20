@@ -10,24 +10,34 @@ format :html do
       triangle_left: :expand_less,
       triangle_right: :expand_more,
       flag: :flag,
-      option_horizontal: :more_horiz
+      option_horizontal: :more_horiz,
+      pushpin: :pin_drop,
+      baby_formula: :add,
+      log_out: :add,
+      log_in: :add,
+      explore: :explore,
+      remove: :close
     },
     font_awesome: {
-      option_horizontal: :ellipsis_h
+      option_horizontal: :ellipsis_h,
+      pushpin: "thumb-tack"
     },
     glyphicon: {
       option_horizontal: "option-horizontal",
       triangle_left: "triangle-left",
-      triangle_right: "triagnle-right"
+      triangle_right: "triagnle-right",
+      baby_formula: "baby-formula",
+      log_out: "log-out",
+      log_in: "log-in",
     }
-  }
+  }.freeze
 
   def icon_class library, icon
     ICON_MAP[library][icon] || icon
   end
 
   def icon_tag icon, extra_class=""
-    return "" unless icon
+    return "" unless icon.present?
     material_icon icon_class(:material, icon), extra_class
   end
 
@@ -50,16 +60,16 @@ format :html do
   def button_link link_text, opts={}
     btn_type = opts.delete(:btn_type) || "primary"
     opts[:class] = [opts[:class], "btn btn-#{btn_type}"].compact.join " "
-    smart_link_to link_text, opts.merge(type: "button")
+    smart_link_to link_text, opts
   end
 
   def dropdown_button name, opts={}
     <<-HTML
-      <div class="btn-group" role="group">
-        <button type="button" class="btn btn-primary dropdown-toggle"
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-primary dropdown-toggle"
                 data-toggle="dropdown" title="#{name}" aria-expanded="false"
                 aria-haspopup="true">
-          #{glyphicon opts[:icon] if opts[:icon]} #{name}
+          #{icon_tag opts[:icon] if opts[:icon]} #{name}
           <span class="caret"></span>
         </button>
         #{dropdown_list yield, opts[:class], opts[:active]}
@@ -82,7 +92,7 @@ format :html do
 
   def dropdown_list_item item, active_test, active
     return unless item
-    %{<li class="dropdown-item #{ ' active' if active_test == active}">#{item}</li>}
+    "<li #{'class=\'active\'' if active_test == active}>#{item}</li>"
   end
 
   def separator
@@ -90,7 +100,7 @@ format :html do
   end
 
   def split_button main_button, active_item
-    wrap_with :div, class: "btn-group" do
+    wrap_with :div, class: "btn-group btn-group-sm" do
       [
         main_button,
         split_button_toggle,

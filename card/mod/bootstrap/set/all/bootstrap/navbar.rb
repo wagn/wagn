@@ -13,7 +13,7 @@ format :html do
       opts[:collapsed_content] ||= ""
       opts[:collapsed_content] +=
         navbar_toggle(
-          id, opts[:toggle], "pull-left navbar-link"
+          id, opts[:toggle], "navbar-link"
         ).html_safe
     end
     wrap_with :nav, nav_opts do
@@ -28,12 +28,12 @@ format :html do
   end
 
   def navbar_nocollapse content, nav_opts
-    content = wrap_with(:div, content, class: "container-fluid")
+    content = wrap_with(:div, content)
     wrap_with :nav, content, nav_opts
   end
 
   def navbar_collapsed_content content
-    wrap_with(:div, content, class: "container-fluid") if content
+    wrap_with(:div, content) if content
   end
 
   def navbar_header id, content="", opts={}

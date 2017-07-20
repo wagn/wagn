@@ -1,3 +1,5 @@
+
+
 format :html do
   # Options
   # header: { content: String, brand: ( String | {name: , href: } ) }
@@ -6,24 +8,11 @@ format :html do
     nav_opts[:class] ||= opts[:class]
     add_class nav_opts,
               "navbar navbar-inverse bg-#{opts.delete(:navbar_type) || 'primary'}"
-    return navbar_nocollapse(yield, nav_opts) if opts[:no_collapse]
-    header_opts = opts[:header] || {}
-    if opts[:toggle_align] == :left
-      opts[:toggle] = :hide
-      opts[:collapsed_content] ||= ""
-      opts[:collapsed_content] +=
-        navbar_toggle(
-          id, opts[:toggle], "navbar-link"
-        ).html_safe
-    end
-    wrap_with :nav, nav_opts do
-      [
-        navbar_header(id, header_opts.delete(:content),
-                      header_opts.reverse_merge(toggle: opts[:toggle])),
-        navbar_collapsed_content(opts[:collapsed_content]),
-        wrap_with(:div, class: "collapse navbar-collapse",
-                        id: "navbar-collapse-#{id}") { yield }
-      ]
+    content = yield
+    if opts[:no_collapse]
+      navbar_nocollapse(content, nav_opts)
+    else
+      navbar_responsive id, content, nav_opts, opts
     end
   end
 
@@ -32,11 +21,22 @@ format :html do
     wrap_with :nav, content, nav_opts
   end
 
-  def navbar_collapsed_content content
-    wrap_with(:div, content) if content
+  def navbar_responsive id, nav_opts, opts
+    header_opts = opts[:header] || {}
+    opts[:toggle_align] ||= :right
+    end
+    wrap_with :nav, nav_opts do
+      [
+        navbar_header(header_opts.delete(:content),
+                      header_opts),
+        navbar_toggle(id, opts[:toggle_align]),
+        wrap_with(:div, class: "collapse navbar-collapse",
+                  id: "navbar-collapse-#{id}") {yield}
+      ]
+    end
   end
 
-  def navbar_header id, content="", opts={}
+  def navbar_header content="", opts={}
     brand =
       if opts[:brand]
         if opts[:brand].is_a? String
@@ -48,24 +48,17 @@ format :html do
       end
     wrap_with :div, class: "navbar-header" do
       [
-        (navbar_toggle(id, opts[:toggle]) unless opts[:toggle] == :hide),
         brand,
         (content if content)
       ]
     end
   end
 
-  def navbar_toggle id, content=nil, css_class=""
-    content ||= %(
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                )
+  def navbar_toggle id, align
+    content ||= %(<span class="navbar-toggler-icon"></span>)
     <<-HTML
-      <button type="button" class="navbar-toggle collapsed #{css_class}"
-              data-toggle="collapse" data-target="#navbar-collapse-#{id}">
-        <span class="sr-only">Toggle navigation</span>
-        #{content}
+      <button class="navbar-toggler navbar-toggler-#{align}" type="button" data-toggle="collapse" data-target="#navbar-collapse-#{id}" aria-controls="navbar-collapse-#{id}" aria-expanded="false" aria-label="Toggle navigation">
+          #{content}
       </button>
     HTML
   end

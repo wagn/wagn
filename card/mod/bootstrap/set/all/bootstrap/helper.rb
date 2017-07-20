@@ -12,9 +12,9 @@ format :html do
       flag: :flag,
       option_horizontal: :more_horiz,
       pushpin: :pin_drop,
-      baby_formula: :add,
-      log_out: :add,
-      log_in: :add,
+      baby_formula: :device_hub,
+      log_out: :call_made,
+      log_in: :call_received,
       explore: :explore,
       remove: :close
     },

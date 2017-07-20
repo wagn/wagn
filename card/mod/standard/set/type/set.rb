@@ -184,8 +184,8 @@ format :html do
     id = "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}"
     related_sets = card.related_sets(true)
     return "" if related_sets.size <= 1
-    navbar id, toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
-               class: "slotter toolbar", navbar_type: "inverse",
+    navbar id, toggle: '<span>Set</span>', toggle_align: :left,
+               class: "slotter toolbar navbar-toggleable-md", navbar_type: "inverse",
                collapsed_content: close_link("pull-right hidden-sm-up") do
       [
         wrap_with(:span, "Set:", class: "navbar-text hidden-xs-down"),
@@ -197,7 +197,9 @@ format :html do
                           show: "subheader set_navbar" }
             link = link_to_card name, label, remote: true,
                                              path: { view: @slot_view,
-                                                     slot: slot_opts }
+                                                     slot: slot_opts },
+                                             class: "nav-link"
+
             li_pill link, name == card.name
           end
         end)
@@ -206,13 +208,13 @@ format :html do
   end
 
   def li_pill content, active
-    "<li role='presentation' #{"class='active'" if active}>#{content}</li>"
+    "<li role='presentation' class='nav-item #{'active' if active}'>#{content}</li>"
   end
 
   view :rule_navbar do
     navbar "rule-navbar-#{card.cardname.safe_key}-#{voo.home_view}",
-           toggle: 'Rules<span class="caret"></span>', toggle_align: :left,
-           class: "slotter toolbar", navbar_type: "inverse",
+           toggle: '<span>Rules</span>', toggle_align: :left,
+           class: "slotter toolbar navbar-toggleable-md", navbar_type: "inverse",
            collapsed_content: close_link("pull-right hidden-sm-up") do
       [rule_navbar_heading, rule_navbar_content]
     end
@@ -241,7 +243,7 @@ format :html do
 
   def view_link_pill name, view
     selected_view = @selected_rule_navbar_view || @slot_view || voo.home_view
-    link = link_to_view view, name, class: "slotter", role: "pill",
+    link = link_to_view view, name, class: "nav-link slotter", role: "pill",
                                     path: { slot: { show: :rule_navbar } }
     li_pill link, selected_view == view
   end

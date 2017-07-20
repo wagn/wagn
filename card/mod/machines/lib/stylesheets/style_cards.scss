@@ -163,10 +163,14 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   position: relative;
   > .d0-card-frame {
     white-space: nowrap;
-    padding-right: 30px;
+    //padding-right: 30px;
     overflow: hidden;
     text-overflow: ellipsis;
     position: static;
+    width:100%;
+    > .d0-card-header{
+      float: left;
+    }
   }
   .card-menu.btn-group {
     display: none;
@@ -176,8 +180,8 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
   }
 }
 .closed-content {
-  display: inline;
-  white-space: nowrap;
+  //display: inline;
+  //white-space: nowrap;
 
   table, thead, tbody, tr, th, td, p, h1, h2, h3, h4, h5, h6, ul, li, pre, ol, div, span, a, blockquote, img, label, i {
     display: inline;

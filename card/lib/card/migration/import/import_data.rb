@@ -15,6 +15,17 @@ class Card
           data.write_attributes
         end
 
+        def self.load data_path, opts={}
+          data = ImportData.new(data_path)
+          if opts[:all]
+            data.all_cards
+          elsif opts[:only]
+            data.select_cards opts[:only]
+          else
+            data.changed_cards
+          end
+        end
+
         def initialize data_path
           @path = File.join data_path, "cards.yml"
           @card_content_dir = File.join data_path, "cards"

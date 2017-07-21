@@ -4,8 +4,9 @@ class Card
       # executes the card import
       class Merger
         def initialize data_path, opts={}
+          @data_path = data_path
           @output_path = File.join data_path, "unmerged"
-          load_data opts
+          @data = ImportData.load @data_path, opts
         end
 
         def merge
@@ -21,20 +22,9 @@ class Card
 
         private
 
-        def load_data opts
-          @data =
-            if opts[:all]
-              ImportData.all_cards
-            elsif opts[:only]
-              ImportData.select_cards opts[:only]
-            else
-              ImportData.changed_cards
-            end
-        end
-
         def update_import_data
           update_time = Time.zone.now.to_s
-          ImportData.update do |import_data|
+          ImportData.update(@data_path) do |import_data|
             @data.each do |card_data|
               import_data.merged card_data, update_time
             end

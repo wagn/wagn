@@ -14,14 +14,12 @@
  view :raw do |_args|
    content = File.read File.join(STYLESHEETS_DIR, "font-awesome.css")
    content += File.read File.join(STYLESHEETS_DIR, "material-icons.css")
-   return content
+   #return content
    #return File.read(File.join(STYLESHEETS_DIR, "bootstrap.css"))
+
    # variables
-   content = File.read("#{BOOTSTRAP_PATH}/_variables.scss")
-   content += %(
-      $bootstrap-sass-asset-helper: false;
-      $icon-font-path: "#{card_url 'assets/fonts/'}";
-    )
+   content += File.read("#{BOOTSTRAP_PATH}/_variables.scss")
+
    # mixins
    content += File.read File.join(BOOTSTRAP_PATH, "_mixins.scss")
    content += card.read_dir("mixins")
@@ -48,7 +46,5 @@
 
    # Utility classes
    content += card.read_dir("utilities")
-
-   content += File.read File.join(STYLESHEETS_DIR, "font-awesome.css")
    content
 end

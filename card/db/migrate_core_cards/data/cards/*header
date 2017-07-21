@@ -3,13 +3,14 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="navbar-brand">
+      {{*logo|size:small}}
       {{*title|core}}
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
       <div class="navbar-nav mr-auto">
-        {{*main menu|navbar_links}}  
-        {{*navbox|navbar}}
+        {{*main menu|navbar_links}}
       </div>
+      {{*navbox|navbar}}
       {{*account links|navbar_links}}
     </div>
 </div>

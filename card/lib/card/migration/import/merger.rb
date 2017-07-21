@@ -3,9 +3,8 @@ class Card
     class Import
       # executes the card import
       class Merger
-        OUTPUT_FILE = Card::Migration.data_path "unmerged"
-
-        def initialize opts={}
+        def initialize data_path, opts={}
+          @output_path = File.join data_path, "unmerged"
           load_data opts
         end
 
@@ -14,7 +13,7 @@ class Card
 
           Card::Mailer.perform_deliveries = false
           Card::Auth.as_bot do
-            Card.merge_list @data, output_file: OUTPUT_FILE
+            Card.merge_list @data, output_file: @output_path
           end
 
           update_import_data

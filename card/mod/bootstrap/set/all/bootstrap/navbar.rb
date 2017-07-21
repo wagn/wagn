@@ -40,7 +40,7 @@ format :html do
   def navbar_header brand
     return "" unless brand
     if brand.is_a? String
-      "<a class='navbar-brand' href='#'>#{brand}</a>"
+      "<span class='navbar-brand'>#{brand}</span>"
     else
       link = brand[:href] || "#"
       "<a class='navbar-brand' href='#{link}#'>#{brand[:name]}</a>"

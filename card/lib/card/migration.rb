@@ -98,7 +98,7 @@ class Card::Migration < ActiveRecord::Migration
     names_or_keys = Array(names_or_keys)
     Card::Mailer.perform_deliveries = false
 
-    Card::Migration::Import.merge only: names_or_keys
+    Card::Migration::Import.new(data_path).merge only: names_or_keys
   end
 
   def read_json filename

@@ -70,7 +70,7 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
 }
 
 .menu-slot {
-  width:100%;
+  width: 100%;
   position: relative;
 
   span.menu-item-label {
@@ -84,9 +84,6 @@ Choosing (b) will mean your CSS will not be affected by automated updates.
     li {
       white-space: nowrap;
       text-align: left;
-      a {
-        color: #333;
-      }
     }
     .dropdown-menu {
       right: -2px;

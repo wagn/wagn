@@ -1,68 +1,84 @@
-// Journal 4.0.0
+// Minty 4.0.0
 // Bootswatch
 
 
-$web-font-path: "https://fonts.googleapis.com/css?family=News+Cycle:400,700" !default;
+$web-font-path: "https://fonts.googleapis.com/css?family=Montserrat" !default;
 @import url($web-font-path);
 
 // Navbar ======================================================================
 
-.bg-primary {
-  background-color: #fff !important;
-  border: 1px solid $gray-lightest;
-
-  &.navbar-fixed-top {
-    border-width: 0 0 1px 0;
-  }
-
-  &.navbar-fixed-bottom {
-    border-width: 1px 0 0 0;
-  }
+.navbar {
+  font-family: $headings-font-family;
 }
 
 .bg-inverse {
-  background-color: #000 !important;
-}
-
-.navbar {
-  font-size: 18px;
-  font-family: $headings-font-family;
-  font-weight: $headings-font-weight;
-
-  &-nav .nav-item + .nav-item {
-    margin-left: 2rem;
-  }
-}
-
-.navbar-brand {
-  padding-top: 0.5rem;
-  font-size: inherit;
-  font-weight: $headings-font-weight;
-  text-transform: uppercase;
+  background-color: $btn-secondary-bg !important;
 }
 
 // Buttons =====================================================================
 
 .btn {
   font-family: $headings-font-family;
-  font-weight: $headings-font-weight;
 }
 
 // Typography ==================================================================
 
 // Tables ======================================================================
 
+.thead-inverse th {
+  background-color: $brand-primary;
+  font-family: $headings-font-family;
+}
+
+.table-success,
+.table-info,
+.table-warning,
+.table-danger {
+  color: #fff;
+}
+
 // Forms =======================================================================
+
+legend {
+  font-family: $headings-font-family;
+}
 
 // Navs ========================================================================
 
-.pagination {
+.dropdown-menu {
+  font-family: $font-family-sans-serif;
+}
+
+.breadcrumb {
+  a {
+    color: $navbar-inverse-color;
+  }
+
   a:hover {
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+.pagination {
+  .page-link:hover {
     text-decoration: none;
   }
 }
 
 // Indicators ==================================================================
+
+.alert {
+
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+  }
+
+  a,
+  .alert-link {
+    color: #fff;
+  }
+}
 
 // Progress bars ===============================================================
 

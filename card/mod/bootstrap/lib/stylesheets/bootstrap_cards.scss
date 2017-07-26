@@ -8,6 +8,7 @@
   Note: these styles do not appear in pre-bootstrap skins.
 */
 {{bootstrap default skin+variables}}
+{{style: bootstrap breakpoints}}
 
 
 $label_color: #666666;
@@ -141,7 +142,7 @@ body.mceContentBody {
 
 /*---------- Card menu ------------*/
 
-@media (min-width: $screen-xs-max) {
+@include media-breakpoint-up(xs) {
   .card-slot > .d0-card-frame > .menu-slot > .vertical-card-menu._show-on-hover {
     .btn-group.slotter {
       display: none;

@@ -1,15 +1,5 @@
  include_set Abstract::CodeFile
-
- STYLESHEETS_DIR = File.join(Cardio.gem_root, "mod",
-                             file_content_mod_name, "lib",
-                             "stylesheets").freeze
- BOOTSTRAP_PATH = File.join(STYLESHEETS_DIR, "bootstrap", "scss").freeze
-
- def read_dir sub_dir
-   Dir.glob("#{BOOTSTRAP_PATH}/#{sub_dir}/*.scss").map do |name|
-     File.read name
-   end.join("\n")
- end
+ include_set Abstract::BootstrapCodeFile
 
  view :raw do |_args|
    content = File.read File.join(STYLESHEETS_DIR, "font-awesome.css")

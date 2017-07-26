@@ -1,8 +1,7 @@
-include_set Abstract::CodeFile
 include_set Abstract::BootstrapCodeFile
 
-view :raw do |_args|
-  # mixins
-  content = File.read File.join(BOOTSTRAP_PATH, "_mixins.scss")
-  content + card.read_dir("mixins")
+def load_stylesheets
+  add_bs_stylesheet "mixins"
+  add_bs_subdir "mixins"
 end
+

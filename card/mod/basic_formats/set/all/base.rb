@@ -23,11 +23,21 @@ format do
   end
 
   view :link, closed: true, perms: :none do
+    link_view
+  end
+
+  view :nav_link, closed: true, perms: :none do
+    link_view class: "nav-link"
+  end
+
+  def link_view opts={}
     title = showname voo.title
-    opts = { known: card.known? }
+    opts[:known] = card.known?
     opts[:path] = { card: { type: voo.type } } if voo.type && !opts[:known]
     link_to_card card.name, title, opts
   end
+
+
 
   view(:codename, closed: true) { card.codename.to_s }
   view(:id,       closed: true) { card.id            }

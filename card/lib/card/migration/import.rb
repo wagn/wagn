@@ -1,5 +1,5 @@
-require "import_data"
-require "merger"
+require_relative "import/import_data"
+require_relative "import/merger"
 
 class Card
   class Migration

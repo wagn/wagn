@@ -100,12 +100,13 @@ format :html do
 
   def tab_button target, text, active=false, link_attr={}
     link = tab_button_link target, text, link_attr
-    li_args = { role: :presentation }
-    li_args[:class] = "active" if active
+    li_args = { role: :presentation, class: "nav-item" }
+    add_class li_args, "active" if active
     wrap_with :li, link, li_args
   end
 
   def tab_button_link target, text, link_attr={}
+    add_class link_attr, "nav-link"
     link_to fancy_title(text), link_attr.merge(
       path: target, role: "tab", "data-toggle" => "tab"
     )

@@ -5,7 +5,7 @@ def self.included host_class
     File.join(Cardio.gem_root, "mod",
               host_class.file_content_mod_name, "lib", "stylesheets")
   host_class.bootstrap_path =
-    File.join( host_class.stylesheets_dir, "bootstrap", "scss")
+    File.join(host_class.stylesheets_dir, "bootstrap", "scss")
 end
 
 def add_bs_subdir sub_dir
@@ -30,9 +30,9 @@ def load_from_path path
 end
 
 def stylesheets
-  @stylesheets || load_stylesheets
+  load_stylesheets unless @stylesheets
+  @stylesheets
 end
-
 
 view :raw do |_args|
   card.stylesheets.join "\n"

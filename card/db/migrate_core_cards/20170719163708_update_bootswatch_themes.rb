@@ -63,6 +63,7 @@ class UpdateBootswatchThemes < Card::Migration::Core
 
     def thumbnail_args
       {
+        codename: "#{@skin_codename}_image",
         type_id: Card::ImageID,
         mod: :bootstrap, storage_type: :coded,
         image: File.open(resource_path("thumbnail.png"))
@@ -70,7 +71,8 @@ class UpdateBootswatchThemes < Card::Migration::Core
     end
 
     def resource_path resource
-      Card::Migration::Core.data_path "b4_themes/#{@theme_name.downcase.tr(" ","_")}/#{resource}"
+      subdir = "b4_themes/#{@theme_name.downcase.tr(" ","_")}/#{resource}"
+      Card::Migration::Core.data_path subdir
     end
   end
 end

@@ -197,12 +197,6 @@ def item_names args={}
   end
 end
 
-def item_ids args={}
-  item_names(args).map do |name|
-    Card.fetch_id name
-  end.compact
-end
-
 def item_type
   opt = options_rule_card
   if !opt || opt == self # fixme, need better recursion prevention

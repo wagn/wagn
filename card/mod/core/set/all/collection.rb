@@ -42,6 +42,12 @@ def item_cards _args={} # FIXME: this is inconsistent with item_names
   [self]
 end
 
+def item_ids args={}
+  item_names(args).map do |name|
+    Card.fetch_id name
+  end.compact
+end
+
 def collection?
   item_cards != [self]
 end
